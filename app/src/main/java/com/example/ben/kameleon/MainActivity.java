@@ -12,4 +12,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Commit
+    //Committed to development
+
+    private void TestCommit() {
+        int i = 1+1;
+    }
 }
