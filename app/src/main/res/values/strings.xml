@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Kameleon</string>
+    <string name="weather_mode">Weather Mode</string>
+    <string name="weather_mode_desc">Automatically changes the wallpaper depending on the weather outside.</string>
 </resources>
