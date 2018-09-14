@@ -2,185 +2,168 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ddd"
-    android:padding="16dp">
+    android:background="#ededed">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="12dp">
 
         <android.support.v7.widget.CardView
-            android:id="@+id/android_card_view_example1"
+            android:id="@+id/weather_mode_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp">
+            android:layout_marginBottom="14dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#fff"
                 android:elevation="4dp"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <ImageView
-                    android:id="@+id/cardview_image1"
+                    android:id="@+id/weather_mode_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_marginEnd="18dp"
-                    android:src="@drawable/weather_icon" />
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/icon_weather" />
 
                 <TextView
-                    android:id="@+id/cardview_list_title1"
+                    android:id="@+id/weather_mode_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/cardview_image1"
+                    android:layout_toEndOf="@+id/weather_mode_icon"
                     android:paddingBottom="5dp"
                     android:text="@string/weather_mode"
-                    android:textSize="24sp" />
+                    android:textSize="26sp" />
 
                 <TextView
-                    android:id="@+id/short_description1"
+                    android:id="@+id/weather_mode_desc"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/weather_mode_title"
+                    android:layout_toEndOf="@+id/weather_mode_icon"
+                    android:layout_toStartOf="@id/weather_mode_radio"
+                    android:text="@string/weather_mode_desc"
+                    android:textColor="#8b8b8b"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/weather_mode_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/cardview_list_title1"
-                    android:layout_toEndOf="@+id/cardview_image1"
-                    android:text="@string/weather_mode_desc"
-                    android:textColor="#8b8b8b" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
 
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/android_card_view_example2"
+            android:id="@+id/wifi_mode_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp">
+            android:layout_marginBottom="14dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#fff"
                 android:elevation="4dp"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <ImageView
-                    android:id="@+id/cardview_image2"
+                    android:id="@+id/wifi_mode_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_marginEnd="18dp"
-                    android:src="@drawable/weather_icon" />
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/icon_wifi" />
 
                 <TextView
-                    android:id="@+id/cardview_list_title2"
+                    android:id="@+id/wifi_mode_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/cardview_image2"
+                    android:layout_toEndOf="@+id/wifi_mode_icon"
                     android:paddingBottom="5dp"
-                    android:text="@string/weather_mode"
-                    android:textSize="24sp" />
+                    android:text="@string/wifi_mode"
+                    android:textSize="26sp" />
 
                 <TextView
-                    android:id="@+id/short_description2"
+                    android:id="@+id/wifi_mode_desc"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/wifi_mode_title"
+                    android:layout_toEndOf="@+id/wifi_mode_icon"
+                    android:layout_toStartOf="@id/wifi_mode_radio"
+                    android:text="@string/wifi_mode_desc"
+                    android:textColor="#8b8b8b"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/wifi_mode_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/cardview_list_title2"
-                    android:layout_toEndOf="@+id/cardview_image2"
-                    android:text="@string/weather_mode_desc"
-                    android:textColor="#8b8b8b" />
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/android_card_view_example3"
+            android:id="@+id/temp_mode_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp">
+            android:layout_marginBottom="14dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#fff"
                 android:elevation="4dp"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <ImageView
-                    android:id="@+id/cardview_image3"
+                    android:id="@+id/temp_mode_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_marginEnd="18dp"
-                    android:src="@drawable/weather_icon" />
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/icon_temp" />
 
                 <TextView
-                    android:id="@+id/cardview_list_title3"
+                    android:id="@+id/temp_mode_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/cardview_image3"
+                    android:layout_toEndOf="@+id/temp_mode_icon"
                     android:paddingBottom="5dp"
-                    android:text="@string/weather_mode"
-                    android:textSize="24sp" />
+                    android:text="@string/temp_mode"
+                    android:textSize="26sp" />
 
                 <TextView
-                    android:id="@+id/short_description3"
+                    android:id="@+id/temp_mode_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/cardview_list_title3"
-                    android:layout_toEndOf="@+id/cardview_image3"
-                    android:text="@string/weather_mode_desc"
-                    android:textColor="#8b8b8b" />
+                    android:layout_below="@+id/temp_mode_title"
+                    android:layout_toEndOf="@+id/temp_mode_icon"
+                    android:layout_toStartOf="@id/temp_mode_radio"
+                    android:text="@string/temp_mode_desc"
+                    android:textColor="#8b8b8b"
+                    android:textSize="16sp" />
 
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/android_card_view_example4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#fff"
-                android:elevation="4dp"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/cardview_image4"
+                <RadioButton
+                    android:id="@+id/temp_mode_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginEnd="18dp"
-                    android:src="@drawable/weather_icon" />
-
-                <TextView
-                    android:id="@+id/cardview_list_title4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/cardview_image4"
-                    android:paddingBottom="5dp"
-                    android:text="@string/weather_mode"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:id="@+id/short_description4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/cardview_list_title4"
-                    android:layout_toEndOf="@+id/cardview_image4"
-                    android:text="@string/weather_mode_desc"
-                    android:textColor="#8b8b8b" />
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
 
