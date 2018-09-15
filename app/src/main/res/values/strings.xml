@@ -6,4 +6,5 @@
     <string name="wifi_mode_desc">Automatically changes the wallpaper depending on your Wi-Fi network.</string>
     <string name="temp_mode">Temperature Mode</string>
     <string name="temp_mode_desc">Automatically changes the wallpaper depending on the temperature outside.</string>
+    <string name="mode_button">Select</string>
 </resources>
