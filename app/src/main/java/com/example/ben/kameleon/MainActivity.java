@@ -23,11 +23,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            getSupportActionBar().setLogo(R.drawable.ic_menu);
-//            getSupportActionBar().setDisplayUseLogoEnabled(true);
-//        }
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         // Creates navigation drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
