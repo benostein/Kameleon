@@ -7,4 +7,6 @@
     <string name="temp_mode">Temperature Mode</string>
     <string name="temp_mode_desc">Automatically changes the wallpaper depending on the temperature outside.</string>
     <string name="mode_button">Select</string>
+    <string name="temp_setting">Temperature</string>
+    <string name="temp_setting_desc">Change the units of the temperature displayed.</string>
 </resources>
