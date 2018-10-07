@@ -2,6 +2,8 @@ package com.example.ben.kameleon;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -35,24 +37,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, 't', 't');
-//        mDrawerLayout.addDrawerListener(toggle);
-//        toggle.syncState();
+
+        displaySelectedScreen(R.id.nav_home);
 
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()){
-////            case R.id.nav_settings:
-////                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
-////                break;
-////        }
-////
-////        mDrawerLayout.closeDrawer(GravityCompat.START);
-
-        return true;
-    }
 
     // Allows menu button to open navigation panel when pressed
     @Override
@@ -65,12 +54,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-//            mDrawerLayout.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
+    // Allows back button on device to close navigation drawer
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        // When an item in the navigation drawer has been selected, pass the id of the item into the method below
+        displaySelectedScreen(item.getItemId());
+        return true;
+    }
+
+    private void displaySelectedScreen(int itemId) {
+
+        // Creates the fragment object
+        Fragment fragment = null;
+
+        // Checks which object has been selected in the navigation drawer
+        switch (itemId) {
+            case R.id.nav_home:
+                fragment = new MainFragment();
+                break;
+            case R.id.nav_settings:
+                fragment = new SettingsFragment();
+                break;
+            case R.id.nav_widgets:
+                fragment = new WidgetsFragment();
+                break;
+        }
+
+        // Replaces the fragment with the object selected in navigation drawer
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_container, fragment);
+            ft.commit();
+        }
+
+        // Closes drawer once item in navigation drawer has been selected
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
 }
