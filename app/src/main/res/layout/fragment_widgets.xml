@@ -24,7 +24,7 @@
                 android:padding="12dp">
 
                 <android.support.v7.widget.CardView
-                    android:id="@+id/temp_setting_card"
+                    android:id="@+id/weather_widget_card"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="14dp">
@@ -32,12 +32,12 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#000"
+                        android:background="#fff"
                         android:elevation="4dp"
                         android:padding="10dp">
 
                         <ImageView
-                            android:id="@+id/temp_setting_icon"
+                            android:id="@+id/weather_widget_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
@@ -46,32 +46,33 @@
                             android:src="@drawable/icon_weather" />
 
                         <TextView
-                            android:id="@+id/temp_setting_title"
+                            android:id="@+id/weather_widget_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/temp_setting_icon"
+                            android:layout_toEndOf="@+id/weather_widget_icon"
                             android:paddingBottom="5dp"
-                            android:text="@string/temp_setting"
+                            android:text="@string/weather_widget"
                             android:textSize="20sp" />
 
                         <TextView
-                            android:id="@+id/temp_setting_desc"
+                            android:id="@+id/weather_widget_desc"
                             android:layout_width="220dp"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/temp_setting_title"
-                            android:layout_toEndOf="@+id/temp_setting_icon"
-                            android:layout_toStartOf="@id/temp_setting_spinner"
-                            android:text="@string/temp_setting_desc"
+                            android:layout_below="@+id/weather_widget_title"
+                            android:layout_toEndOf="@+id/weather_widget_icon"
+                            android:layout_toStartOf="@id/weather_widget_spinner"
+                            android:text="@string/weather_widget_desc"
                             android:textColor="#8b8b8b"
                             android:textSize="14sp" />
 
                         <Spinner
-                            android:id="@+id/temp_setting_spinner"
+                            android:id="@+id/weather_widget_spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
+                            android:layout_centerVertical="true"
+                            android:entries="@array/weather_widgets" />
 
                     </RelativeLayout>
 

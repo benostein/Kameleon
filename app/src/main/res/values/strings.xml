@@ -9,4 +9,19 @@
     <string name="mode_button">Select</string>
     <string name="temp_setting">Temperature</string>
     <string name="temp_setting_desc">Change the units of the temperature displayed.</string>
+    <string name="weather_widget">Weather Data</string>
+    <string name="weather_widget_desc">Select a piece of weather data to display within the background.</string>
+
+    <string-array name="temp_units">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+        <item>Kelvin</item>
+    </string-array>
+
+    <string-array name="weather_widgets">
+        <item>None</item>
+        <item>Temperature</item>
+        <item>Humidity</item>
+        <item>Wind Speed</item>
+    </string-array>
 </resources>

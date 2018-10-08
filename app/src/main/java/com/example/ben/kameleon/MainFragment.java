@@ -12,6 +12,12 @@ public class MainFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        // When view is being created, do this:
+
+        // Sets the action bar at the top of the app to say the current mode
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Kameleon");
+
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 

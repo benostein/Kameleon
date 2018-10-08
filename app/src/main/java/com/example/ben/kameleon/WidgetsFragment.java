@@ -12,13 +12,17 @@ public class WidgetsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        // When view is being created, do this:
+
+        // Sets the action bar at the top of the app to say the current mode
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Widgets");
+
         return inflater.inflate(R.layout.fragment_widgets, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Settings");
-        // on Settings Fragment load, code goes here
     }
 }
