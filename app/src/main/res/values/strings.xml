@@ -18,10 +18,4 @@
         <item>Kelvin</item>
     </string-array>
 
-    <string-array name="weather_widgets">
-        <item>None</item>
-        <item>Temperature</item>
-        <item>Humidity</item>
-        <item>Wind Speed</item>
-    </string-array>
 </resources>
