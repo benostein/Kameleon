@@ -1,5 +1,7 @@
 package com.example.ben.kameleon;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,10 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class SettingsFragment extends Fragment {
+
+    private Spinner tempSpinner;
+//    int tempSpinnerValue = tempSpinner.getSelectedItemPosition();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,6 +52,16 @@ public class SettingsFragment extends Fragment {
         // Sets the action bar at the top of the app to say the current mode
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Settings");
 
+//        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = mPreferences.edit();
+//        editor.putInt("selected_temp", tempSpinnerValue);
+//        editor.apply();
+
+//        tempSpinner = (Spinner) getActivity().findViewById(R.id.temp_setting_spinner);
+//        tempSpinner.setOnItemSelectedListener(this);
+
+        //TODO create listener for spinner and store selected item in shared preferences
+
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
@@ -51,4 +69,5 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
+
 }

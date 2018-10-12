@@ -18,6 +18,8 @@ public class MainFragment extends Fragment {
         // Sets the action bar at the top of the app to say the current mode
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Kameleon");
 
+        setRetainInstance(true);
+
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 

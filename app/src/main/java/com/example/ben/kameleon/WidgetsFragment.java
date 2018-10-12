@@ -44,6 +44,8 @@ public class WidgetsFragment extends Fragment {
         // Sets the action bar at the top of the app to say the current mode
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Widgets");
 
+        setRetainInstance(true);
+
         return v;
     }
 
