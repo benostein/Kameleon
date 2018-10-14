@@ -27,13 +27,13 @@
                     android:id="@+id/weather_mode_card"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="14dp">
+                    android:layout_marginBottom="14dp"
+                    android:foreground="?android:attr/selectableItemBackground">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#fff"
-                        android:elevation="4dp"
                         android:padding="10dp">
 
                         <ImageView
@@ -82,13 +82,13 @@
                     android:id="@+id/wifi_mode_card"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="14dp">
+                    android:layout_marginBottom="14dp"
+                    android:foreground="?android:attr/selectableItemBackground">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#fff"
-                        android:elevation="4dp"
                         android:padding="10dp">
 
                         <ImageView
@@ -137,13 +137,13 @@
                     android:id="@+id/temp_mode_card"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="14dp">
+                    android:layout_marginBottom="14dp"
+                    android:foreground="?android:attr/selectableItemBackground">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#fff"
-                        android:elevation="4dp"
                         android:padding="10dp">
 
                         <ImageView

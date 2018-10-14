@@ -1,6 +1,7 @@
 package com.example.ben.kameleon;
 
 import android.content.pm.ActivityInfo;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -10,18 +11,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
+    Button weatherButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -46,33 +52,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
-        // FIX THIS SECTION!!
-        Button weatherButton = findViewById(R.id.weather_mode_button);
-        Button wifiButton = findViewById(R.id.wifi_mode_button);
-        Button tempButton = findViewById(R.id.temp_mode_button);
 
-        weatherButton.setOnClickListener(this);
-        wifiButton.setOnClickListener(this);
-        tempButton.setOnClickListener(this);
+//        wifiButton.setOnClickListener(this);
+//        tempButton.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.weather_mode_button:
-                Toast.makeText(this, "Tester!", Toast.LENGTH_LONG).show();
-                break;
-            case R.id.wifi_mode_button:
-                // do your code
-                break;
-            case R.id.temp_mode_button:
-                // do your code
-                break;
-            default:
-                break;
-        }
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.weather_mode_button:
+//                Toast.makeText(this, "Tester!", Toast.LENGTH_LONG).show();
+//                break;
+//            case R.id.wifi_mode_button:
+//                // do your code
+//                break;
+//            case R.id.temp_mode_button:
+//                // do your code
+//                break;
+//            default:
+//                break;
+//        }
+//
+//    }
 
-    }
 
     // Allows menu button to open navigation panel when pressed
     @Override

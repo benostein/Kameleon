@@ -1,31 +1,133 @@
 package com.example.ben.kameleon;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements View.OnClickListener {
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         // When view is being created, do this:
 
+        View v = inflater.inflate(R.layout.fragment_main, container, false);
+
         // Sets the action bar at the top of the app to say the current mode
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Kameleon");
 
-        setRetainInstance(true);
+        // Locates and assigns variable to each button
+        Button weatherButton = v.findViewById(R.id.weather_mode_button);
+        Button wifiButton = v.findViewById(R.id.wifi_mode_button);
+        Button tempButton = v.findViewById(R.id.temp_mode_button);
+        // Locates and assigns variable to each card
+        CardView weatherCard = v.findViewById(R.id.weather_mode_card);
+        CardView wifiCard = v.findViewById(R.id.wifi_mode_card);
+        CardView tempCard = v.findViewById(R.id.temp_mode_card);
 
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        // Button listeners
+        weatherButton.setOnClickListener(this);
+        wifiButton.setOnClickListener(this);
+        tempButton.setOnClickListener(this);
+        // Card listeners
+        weatherCard.setOnClickListener(this);
+        wifiCard.setOnClickListener(this);
+        tempCard.setOnClickListener(this);
+
+        // Creates a new shared preferences file that allows user preferences to be stored within the application
+        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        // Allows preferences file to be edited using 'editor'
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        // Restores user selected value in spinner from value in shared preferences
+        weatherButton.setEnabled(mPreferences.getBoolean("selected_weather_button",true));
+        wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",true));
+        tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",true));
+
+        return v;
     }
+
+    @Override
+    public void onClick(View view) {
+
+        // Locates and assigns variable to each button
+        Button weatherButton = getView().findViewById(R.id.weather_mode_button);
+        Button wifiButton = getView().findViewById(R.id.wifi_mode_button);
+        Button tempButton = getView().findViewById(R.id.temp_mode_button);
+
+        switch (view.getId()) {
+            case R.id.weather_mode_button:
+                // Displays toast message
+                Toast.makeText(getActivity(), "Weather Mode", Toast.LENGTH_SHORT).show();
+
+                // Disables button when pressed and enables other buttons
+                weatherButton.setEnabled(false);
+                wifiButton.setEnabled(true);
+                tempButton.setEnabled(true);
+                break;
+            case R.id.wifi_mode_button:
+                // Displays toast message
+                Toast.makeText(getActivity(), "Wi-Fi Mode", Toast.LENGTH_SHORT).show();
+
+                // Disables button when pressed and enables other buttons
+                weatherButton.setEnabled(true);
+                wifiButton.setEnabled(false);
+                tempButton.setEnabled(true);
+                break;
+            case R.id.temp_mode_button:
+                // Displays toast message
+                Toast.makeText(getActivity(), "Temperature Mode", Toast.LENGTH_SHORT).show();
+
+                // Disables button when pressed and enables other buttons
+                weatherButton.setEnabled(true);
+                wifiButton.setEnabled(true);
+                tempButton.setEnabled(false);
+                break;
+
+            case R.id.weather_mode_card:
+                // Displays toast message
+                Toast.makeText(getActivity(), "Weather Mode Card", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.wifi_mode_card:
+                // Displays toast message
+                Toast.makeText(getActivity(), "Wi-Fi Mode Card", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.temp_mode_card:
+                // Displays toast message
+                Toast.makeText(getActivity(), "Temperature Mode Card", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        // Saves the state of the mode buttons
+        saveModeButtons(weatherButton, wifiButton, tempButton);
+        }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // on Settings Fragment load, code goes here
     }
+
+    private void saveModeButtons(Button weatherButton, Button wifiButton, Button tempButton) {
+        // Accesses the shared preferences file that allows user preferences to be stored within the application
+        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        // Allows preferences file to be edited using 'editor'
+        final SharedPreferences.Editor editor = mPreferences.edit();
+
+        // Stores the state of the home buttons in shared preferences, so choice is stored when app is closed
+        editor.putBoolean("selected_weather_button", weatherButton.isEnabled());
+        editor.putBoolean("selected_wifi_button", wifiButton.isEnabled());
+        editor.putBoolean("selected_temp_button", tempButton.isEnabled());
+        editor.apply();
+    }
 }
+

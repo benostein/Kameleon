@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- The background color, preferably the same as your normal theme -->
+    <item android:drawable="@drawable/splash_gradient"/>
+
+    <!-- Your product logo - 144dp color version of your app icon -->
+    <item android:drawable="@drawable/ic_kameleon"
+        android:width="192dp"
+        android:height="206.74dp"
+        android:gravity="center"/>
+
+</layer-list>
