@@ -24,8 +24,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class SettingsFragment extends Fragment {
 
-//    int tempSpinnerValue = tempSpinner.getSelectedItemPosition();
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,6 +32,9 @@ public class SettingsFragment extends Fragment {
 
         // Gets the current view on the device and allows for easier access of resources
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        // Sets the action bar at the top of the app to say the current mode
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Settings");
 
         // Finds the settings spinner in the XML and gives it a variable to access
         final Spinner settingsSpinner = v.findViewById(R.id.temp_setting_spinner);
@@ -50,9 +51,6 @@ public class SettingsFragment extends Fragment {
         // Uses the adapter to set the values of the array to the contents and style of the spinner
         settingsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         settingsSpinner.setAdapter(settingsAdapter);
-        
-        // Sets the action bar at the top of the app to say the current mode
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Settings");
 
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
