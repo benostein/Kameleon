@@ -5,8 +5,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.transition.Slide;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,9 +96,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 tempButton.setEnabled(false);
                 break;
 
+
             case R.id.weather_mode_card:
-                // Displays toast message
-                Toast.makeText(getActivity(), "Weather Mode Card", Toast.LENGTH_SHORT).show();
+                // Changes view to weather mode fragment
+                WeatherModeFragment fragment = new WeatherModeFragment();
+                fragment.setEnterTransition(new Slide(Gravity.END));
+                fragment.setExitTransition(new Slide(Gravity.START));
+                replaceFragment(fragment);
                 break;
             case R.id.wifi_mode_card:
                 // Displays toast message
@@ -117,7 +124,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // on Settings Fragment load, code goes here
     }
 
-    private void saveModeButtons(Button weatherButton, Button wifiButton, Button tempButton) {
+    public void saveModeButtons(Button weatherButton, Button wifiButton, Button tempButton) {
         // Accesses the shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         // Allows preferences file to be edited using 'editor'
@@ -129,5 +136,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         editor.putBoolean("selected_temp_button", tempButton.isEnabled());
         editor.apply();
     }
+
+    public void replaceFragment(Fragment someFragment) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_main, someFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
 }
 
