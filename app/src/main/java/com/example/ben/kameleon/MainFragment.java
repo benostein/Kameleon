@@ -125,8 +125,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 break;
         }
 
-        // Saves the state of the mode buttons
-        saveModeButtons(weatherButton, wifiButton, tempButton);
+            // Saves the state of the mode buttons
+            saveModeButtons(weatherButton, wifiButton, tempButton);
         }
 
     @Override
