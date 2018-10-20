@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.transition.Slide;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
@@ -28,6 +31,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // Sets the action bar at the top of the app to say the current mode
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Kameleon");
+
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        ActionBar actionbar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         // Locates and assigns variable to each button
         Button weatherButton = v.findViewById(R.id.weather_mode_button);
@@ -100,8 +110,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             case R.id.weather_mode_card:
                 // Changes view to weather mode fragment
                 WeatherModeFragment fragment = new WeatherModeFragment();
-                fragment.setEnterTransition(new Slide(Gravity.END));
-                fragment.setExitTransition(new Slide(Gravity.START));
+//                fragment.setEnterTransition(new Slide(Gravity.END));
+//                fragment.setExitTransition(new Slide(Gravity.START));
+
                 replaceFragment(fragment);
                 break;
             case R.id.wifi_mode_card:
@@ -139,6 +150,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     public void replaceFragment(Fragment someFragment) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         transaction.replace(R.id.fragment_main, someFragment);
         transaction.addToBackStack(null);
         transaction.commit();

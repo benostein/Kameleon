@@ -27,8 +27,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Sets theme for application
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        // Sets content on launch
         setContentView(R.layout.activity_main);
 
         // Sets custom toolbar as default toolbar and imports menu icon
