@@ -117,7 +117,7 @@ public class WeatherModeFragment extends Fragment implements View.OnClickListene
         editor.putBoolean("selected_nature_pack_button", naturePackButton.isEnabled());
         editor.apply();
     }
-    
+
     public void replaceFragment(Fragment someFragment) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);

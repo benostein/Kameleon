@@ -1,9 +1,21 @@
 package com.example.ben.kameleon;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,12 +30,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
-    Button weatherButton;
+    // Button weatherButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +70,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 //        wifiButton.setOnClickListener(this);
 //        tempButton.setOnClickListener(this);
+
     }
+
+
 
 //    @Override
 //    public void onClick(View v) {

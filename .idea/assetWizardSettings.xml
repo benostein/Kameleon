@@ -33,9 +33,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_back" />
-                            <entry key="sourceFile" value="E:\Users\Ben\My Documents\Photoshop\Kameleon Logo\KameleonForeground.svg" />
+                            <entry key="outputName" value="icon_refresh" />
+                            <entry key="sourceFile" value="E:\Users\Ben\Downloads\Refresh.svg" />
                           </map>
                         </option>
                       </PersistentState>
