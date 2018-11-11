@@ -30,6 +30,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 import static android.content.Context.LOCATION_SERVICE;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
@@ -78,6 +93,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         weatherButton.setEnabled(mPreferences.getBoolean("selected_weather_button",true));
         wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",true));
         tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",true));
+
+        getWeatherData();
 
         return v;
     }
@@ -167,6 +184,69 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         transaction.replace(R.id.fragment_main, someFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void getWeatherData() {
+
+        // Creates a new shared preferences file that allows user preferences to be stored within the application
+        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+
+        double latitude = Double.valueOf(mPreferences.getString("latitude","0"));
+        double longitude = Double.valueOf(mPreferences.getString("longitude","0"));
+
+        String apiKey = BuildConfig.openWeatherMapApiKey;
+
+        String url ="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=imperial";
+
+        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+                    TextView currentCity = getView().findViewById(R.id.current_city);
+                    TextView currentTemp = getView().findViewById(R.id.current_temp);
+                    TextView currentDate = getView().findViewById(R.id.current_date);
+                    TextView currentWeather = getView().findViewById(R.id.current_weather);
+
+                    JSONObject main_object = response.getJSONObject("main");
+                    JSONArray array = response.getJSONArray("weather");
+                    JSONObject object = array.getJSONObject(0);
+                    String temp = String.valueOf(main_object.getDouble("temp"));
+                    String description = object.getString("description");
+                    String city = response.getString("name");
+
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+                    String formatted_date = sdf.format(calendar.getTime());
+
+                    double temp_int = Double.parseDouble(temp);
+                    double centi = (temp_int - 32) /1.8000;
+                    centi = Math.round(centi);
+                    int i = (int)centi;
+
+                    currentCity.setText(city);
+                    currentTemp.setText(String.valueOf(i) + "°");
+                    currentWeather.setText(description.substring(0,1).toUpperCase() + description.substring(1));
+                    currentDate.setText(formatted_date);
+
+                }
+
+                catch(JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+                , new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(jor);
+
     }
 
 }

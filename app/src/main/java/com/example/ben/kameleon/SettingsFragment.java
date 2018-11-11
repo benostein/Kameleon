@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -97,7 +98,7 @@ public class SettingsFragment extends Fragment {
         final TextView gpsCoordinatesText = v.findViewById(R.id.gps_refresh_coords);
 
         // Restores user's last location in settings
-        gpsCoordinatesText.setText("Latitude: " + (mPreferences.getString("latitude","N/A")) + "\n" + "Longitude: " + (mPreferences.getString("longitude","N/A")));
+        gpsCoordinatesText.setText("Latitude: " + (mPreferences.getString("latitude","0")) + "\n" + "Longitude: " + (mPreferences.getString("longitude","0")));
 
         // Initialises location manager and listener so device location can be accessed
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
@@ -160,26 +161,39 @@ public class SettingsFragment extends Fragment {
 
     private void configureGpsButton() {
 
-        // Finds the gps refresh button in the XML and gives it a variable to access
-        Button gpsRefreshButton = getView().findViewById(R.id.gps_refresh_button);
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED) {
 
-        // Listens for when button is pressed
-        gpsRefreshButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onClick(View view) {
-                // Requests device location using GPS in 1000ms intervals
-                locationManager.requestLocationUpdates("gps", 1000, 1, locationListener);
-                try {
-                    // Waits 8 seconds until GPS location has stabilised
-                    Thread.sleep(8000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            // Finds the gps refresh button in the XML and gives it a variable to access
+            Button gpsRefreshButton = getView().findViewById(R.id.gps_refresh_button);
+
+            // Listens for when button is pressed
+            gpsRefreshButton.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("MissingPermission")
+                @Override
+                public void onClick(View view) {
+                    // Requests device location using GPS in 1000ms intervals
+                    locationManager.requestLocationUpdates("gps", 1000, 1, locationListener);
+                    try {
+                        // Waits 8 seconds until GPS location has stabilised
+                        Thread.sleep(8000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    // Stops retrieving GPS data
+                    locationManager.removeUpdates(locationListener);
                 }
-                // Stops retrieving GPS data
-                locationManager.removeUpdates(locationListener);
-            }
-        });
+
+            });
+        }
+
+        else {
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+            }, 10 );
+        }
     }
 
     @Override

@@ -188,6 +188,30 @@
 
                 </android.support.v7.widget.CardView>
 
+                <TextView
+                    android:id="@+id/current_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="City"/>
+
+                <TextView
+                    android:id="@+id/current_temp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Temperature"/>
+
+                <TextView
+                    android:id="@+id/current_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Date"/>
+
+                <TextView
+                    android:id="@+id/current_weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Weather"/>
+
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
