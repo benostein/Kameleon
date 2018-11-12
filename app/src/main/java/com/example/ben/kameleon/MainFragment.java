@@ -67,6 +67,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        // Locates and assigns variable to activate button
+        Button activateButton = v.findViewById(R.id.activate_button);
+        Button deactivateButton = v.findViewById(R.id.deactivate_button);
         // Locates and assigns variable to each button
         Button weatherButton = v.findViewById(R.id.weather_mode_button);
         Button wifiButton = v.findViewById(R.id.wifi_mode_button);
@@ -77,6 +80,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         CardView tempCard = v.findViewById(R.id.temp_mode_card);
 
         // Button listeners
+        activateButton.setOnClickListener(this);
+        deactivateButton.setOnClickListener(this);
         weatherButton.setOnClickListener(this);
         wifiButton.setOnClickListener(this);
         tempButton.setOnClickListener(this);
@@ -87,10 +92,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-        // Allows preferences file to be edited using 'editor'
-        final SharedPreferences.Editor editor = mPreferences.edit();
+
         // Restores user selected value in spinner from value in shared preferences
-        weatherButton.setEnabled(mPreferences.getBoolean("selected_weather_button",true));
+        activateButton.setEnabled(mPreferences.getBoolean("selected_activate_button",true));
+        deactivateButton.setEnabled(mPreferences.getBoolean("selected_deactivate_button",false));
+        // Enables weather mode by default
+        weatherButton.setEnabled(mPreferences.getBoolean("selected_weather_button",false));
         wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",true));
         tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",true));
 
@@ -103,11 +110,25 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
 
         // Locates and assigns variable to each button
+        Button activateButton = getView().findViewById(R.id.activate_button);
+        Button deactivateButton = getView().findViewById(R.id.deactivate_button);
         Button weatherButton = getView().findViewById(R.id.weather_mode_button);
         Button wifiButton = getView().findViewById(R.id.wifi_mode_button);
         Button tempButton = getView().findViewById(R.id.temp_mode_button);
 
         switch (view.getId()) {
+            case R.id.activate_button:
+                Toast.makeText(getActivity(), "Activated", Toast.LENGTH_SHORT).show();
+                activateButton.setEnabled(false);
+                deactivateButton.setEnabled(true);
+                break;
+
+            case R.id.deactivate_button:
+                Toast.makeText(getActivity(), "Deactivated", Toast.LENGTH_SHORT).show();
+                activateButton.setEnabled(true);
+                deactivateButton.setEnabled(false);
+                break;
+
             case R.id.weather_mode_button:
                 // Displays toast message
                 Toast.makeText(getActivity(), "Weather Mode", Toast.LENGTH_SHORT).show();
@@ -156,7 +177,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
 
             // Saves the state of the mode buttons
-            saveModeButtons(weatherButton, wifiButton, tempButton);
+            saveButtons(activateButton, deactivateButton, weatherButton, wifiButton, tempButton);
         }
 
     @Override
@@ -165,13 +186,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // on Settings Fragment load, code goes here
     }
 
-    public void saveModeButtons(Button weatherButton, Button wifiButton, Button tempButton) {
+    public void saveButtons(Button activateButton, Button deactivateButton, Button weatherButton, Button wifiButton, Button tempButton) {
         // Accesses the shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         // Allows preferences file to be edited using 'editor'
         final SharedPreferences.Editor editor = mPreferences.edit();
 
         // Stores the state of the home buttons in shared preferences, so choice is stored when app is closed
+        editor.putBoolean("selected_activate_button", activateButton.isEnabled());
+        editor.putBoolean("selected_deactivate_button", activateButton.isEnabled());
         editor.putBoolean("selected_weather_button", weatherButton.isEnabled());
         editor.putBoolean("selected_wifi_button", wifiButton.isEnabled());
         editor.putBoolean("selected_temp_button", tempButton.isEnabled());

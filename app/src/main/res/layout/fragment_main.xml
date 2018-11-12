@@ -23,196 +23,216 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <android.support.v7.widget.CardView
-                    android:id="@+id/weather_mode_card"
+                <LinearLayout
+                    android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="14dp"
-                    android:foreground="?android:attr/selectableItemBackground">
-
-                    <RelativeLayout
+                    android:layout_marginBottom="10dp">
+                    <Button
+                        android:id="@+id/activate_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#fff"
-                        android:padding="10dp">
-
-                        <ImageView
-                            android:id="@+id/weather_mode_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginTop="6dp"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/icon_weather" />
-
-                        <TextView
-                            android:id="@+id/weather_mode_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/weather_mode_icon"
-                            android:paddingBottom="5dp"
-                            android:text="@string/weather_mode"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/weather_mode_desc"
-                            android:layout_width="220dp"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/weather_mode_title"
-                            android:layout_toEndOf="@+id/weather_mode_icon"
-                            android:layout_toStartOf="@id/weather_mode_button"
-                            android:text="@string/weather_mode_desc"
-                            android:textColor="#8b8b8b"
-                            android:textSize="14sp" />
-
-                        <Button
-                            android:id="@+id/weather_mode_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:text="@string/mode_button"/>
-
-                    </RelativeLayout>
-
-                </android.support.v7.widget.CardView>
-
-                <android.support.v7.widget.CardView
-                    android:id="@+id/wifi_mode_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="14dp"
-                    android:foreground="?android:attr/selectableItemBackground">
-
-                    <RelativeLayout
+                        android:layout_weight="1"
+                        android:text="Activate">
+                    </Button>
+                    <Button
+                        android:id="@+id/deactivate_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#fff"
-                        android:padding="10dp">
+                        android:layout_weight="1"
+                        android:text="Deactivate">
+                    </Button>
+                </LinearLayout>
 
-                        <ImageView
-                            android:id="@+id/wifi_mode_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/icon_wifi" />
-
-                        <TextView
-                            android:id="@+id/wifi_mode_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/wifi_mode_icon"
-                            android:paddingBottom="5dp"
-                            android:text="@string/wifi_mode"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/wifi_mode_desc"
-                            android:layout_width="220dp"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/wifi_mode_title"
-                            android:layout_toEndOf="@+id/wifi_mode_icon"
-                            android:layout_toStartOf="@id/wifi_mode_button"
-                            android:text="@string/wifi_mode_desc"
-                            android:textColor="#8b8b8b"
-                            android:textSize="14sp" />
-
-                        <Button
-                            android:id="@+id/wifi_mode_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:text="@string/mode_button"/>
-
-                    </RelativeLayout>
-
-                </android.support.v7.widget.CardView>
-
-                <android.support.v7.widget.CardView
-                    android:id="@+id/temp_mode_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="14dp"
-                    android:foreground="?android:attr/selectableItemBackground">
-
-                    <RelativeLayout
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/weather_mode_card"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#fff"
-                        android:padding="10dp">
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="14dp"
+                        android:foreground="?android:attr/selectableItemBackground">
 
-                        <ImageView
-                            android:id="@+id/temp_mode_icon"
-                            android:layout_width="wrap_content"
+                        <RelativeLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/icon_temp" />
+                            android:background="#fff"
+                            android:padding="10dp">
 
-                        <TextView
-                            android:id="@+id/temp_mode_title"
-                            android:layout_width="wrap_content"
+                            <ImageView
+                                android:id="@+id/weather_mode_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginTop="6dp"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/icon_weather" />
+
+                            <TextView
+                                android:id="@+id/weather_mode_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toEndOf="@+id/weather_mode_icon"
+                                android:paddingBottom="5dp"
+                                android:text="@string/weather_mode"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:id="@+id/weather_mode_desc"
+                                android:layout_width="220dp"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/weather_mode_title"
+                                android:layout_toEndOf="@+id/weather_mode_icon"
+                                android:layout_toStartOf="@id/weather_mode_button"
+                                android:text="@string/weather_mode_desc"
+                                android:textColor="#8b8b8b"
+                                android:textSize="14sp" />
+
+                            <Button
+                                android:id="@+id/weather_mode_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:text="@string/mode_button"/>
+
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/wifi_mode_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="14dp"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/temp_mode_icon"
-                            android:paddingBottom="5dp"
-                            android:text="@string/temp_mode"
-                            android:textSize="20sp" />
+                            android:background="#fff"
+                            android:padding="10dp">
 
-                        <TextView
-                            android:id="@+id/temp_mode_desc"
-                            android:layout_width="wrap_content"
+                            <ImageView
+                                android:id="@+id/wifi_mode_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/icon_wifi" />
+
+                            <TextView
+                                android:id="@+id/wifi_mode_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toEndOf="@+id/wifi_mode_icon"
+                                android:paddingBottom="5dp"
+                                android:text="@string/wifi_mode"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:id="@+id/wifi_mode_desc"
+                                android:layout_width="220dp"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/wifi_mode_title"
+                                android:layout_toEndOf="@+id/wifi_mode_icon"
+                                android:layout_toStartOf="@id/wifi_mode_button"
+                                android:text="@string/wifi_mode_desc"
+                                android:textColor="#8b8b8b"
+                                android:textSize="14sp" />
+
+                            <Button
+                                android:id="@+id/wifi_mode_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:text="@string/mode_button"/>
+
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/temp_mode_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="14dp"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/temp_mode_title"
-                            android:layout_toEndOf="@+id/temp_mode_icon"
-                            android:layout_toStartOf="@id/temp_mode_button"
-                            android:text="@string/temp_mode_desc"
-                            android:textColor="#8b8b8b"
-                            android:textSize="14sp" />
+                            android:background="#fff"
+                            android:padding="10dp">
 
-                        <Button
-                            android:id="@+id/temp_mode_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:text="@string/mode_button"/>
+                            <ImageView
+                                android:id="@+id/temp_mode_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/icon_temp" />
 
-                    </RelativeLayout>
+                            <TextView
+                                android:id="@+id/temp_mode_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toEndOf="@+id/temp_mode_icon"
+                                android:paddingBottom="5dp"
+                                android:text="@string/temp_mode"
+                                android:textSize="20sp" />
 
-                </android.support.v7.widget.CardView>
+                            <TextView
+                                android:id="@+id/temp_mode_desc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/temp_mode_title"
+                                android:layout_toEndOf="@+id/temp_mode_icon"
+                                android:layout_toStartOf="@id/temp_mode_button"
+                                android:text="@string/temp_mode_desc"
+                                android:textColor="#8b8b8b"
+                                android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/current_city"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="City"/>
+                            <Button
+                                android:id="@+id/temp_mode_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:text="@string/mode_button"/>
 
-                <TextView
-                    android:id="@+id/current_temp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Temperature"/>
+                        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/current_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Date"/>
+                    </android.support.v7.widget.CardView>
 
-                <TextView
-                    android:id="@+id/current_weather"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Weather"/>
+                    <TextView
+                        android:id="@+id/current_city"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="City"/>
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/current_temp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Temperature"/>
+
+                    <TextView
+                        android:id="@+id/current_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Date"/>
+
+                    <TextView
+                        android:id="@+id/current_weather"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Weather"/>
+
+                </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
 

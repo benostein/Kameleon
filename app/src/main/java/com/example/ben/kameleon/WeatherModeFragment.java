@@ -48,8 +48,8 @@ public class WeatherModeFragment extends Fragment implements View.OnClickListene
         // Allows preferences file to be edited using 'editor'
         final SharedPreferences.Editor editor = mPreferences.edit();
         // Restores user selected value in spinner from value in shared preferences
-        cartoonPackButton.setEnabled(mPreferences.getBoolean("selected_cartoon_pack_button",true));
-        naturePackButton.setEnabled(mPreferences.getBoolean("selected_nature_pack_button",false));
+        cartoonPackButton.setEnabled(mPreferences.getBoolean("selected_cartoon_pack_button",false));
+        naturePackButton.setEnabled(mPreferences.getBoolean("selected_nature_pack_button",true));
 
 
         // Allows back button on toolbar to go back to main fragment
