@@ -24,8 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+        <service android:name=".LocationService"/>
+
+    </application>
 
 </manifest>

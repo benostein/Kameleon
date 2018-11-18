@@ -2,8 +2,10 @@ package com.example.ben.kameleon;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,6 +20,7 @@ import android.support.transition.Slide;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -48,6 +51,9 @@ import java.util.Locale;
 import static android.content.Context.LOCATION_SERVICE;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
+
+    private BroadcastReceiver broadcastReceiver;
+    boolean actiavted;
 
     @Nullable
     @Override
@@ -101,10 +107,71 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",true));
         tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",true));
 
+        if(!runtimePermissions())
+            actiavted = true;
+
+
         getWeatherData();
+
 
         return v;
     }
+
+    @Override
+    public void onResume() {
+
+        final TextView gpsCoordinatesText = getView().findViewById(R.id.gps_refresh_coords);
+
+        super.onResume();
+        if(broadcastReceiver == null){
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    gpsCoordinatesText.setText("Latitude: " + intent.getExtras().get("latitude") + "\n" + "Longitude: " + intent.getExtras().get("longitude"));
+                }
+            };
+        }
+
+        getActivity().registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(broadcastReceiver != null) {
+            getActivity().unregisterReceiver(broadcastReceiver);
+        }
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == 100) {
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                actiavted = true;
+            }
+            else {
+                runtimePermissions();
+            }
+        }
+    }
+
+    private boolean runtimePermissions() {
+        if(Build.VERSION.SDK_INT >= 23  && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+
 
     @Override
     public void onClick(View view) {
@@ -121,12 +188,25 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "Activated", Toast.LENGTH_SHORT).show();
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
+
+                if (actiavted == true) {
+                    Intent i = new Intent(getActivity(), LocationService.class);
+                    getActivity().startService(i);
+                }
+
+
                 break;
 
             case R.id.deactivate_button:
                 Toast.makeText(getActivity(), "Deactivated", Toast.LENGTH_SHORT).show();
                 activateButton.setEnabled(true);
                 deactivateButton.setEnabled(false);
+
+                if (actiavted == true) {
+                    Intent i = new Intent(getActivity(), LocationService.class);
+                    getActivity().stopService(i);
+                }
+
                 break;
 
             case R.id.weather_mode_button:
@@ -194,7 +274,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // Stores the state of the home buttons in shared preferences, so choice is stored when app is closed
         editor.putBoolean("selected_activate_button", activateButton.isEnabled());
-        editor.putBoolean("selected_deactivate_button", activateButton.isEnabled());
+        editor.putBoolean("selected_deactivate_button", deactivateButton.isEnabled());
         editor.putBoolean("selected_weather_button", weatherButton.isEnabled());
         editor.putBoolean("selected_wifi_button", wifiButton.isEnabled());
         editor.putBoolean("selected_temp_button", tempButton.isEnabled());
