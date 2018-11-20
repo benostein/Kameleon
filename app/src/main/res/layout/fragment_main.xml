@@ -232,6 +232,18 @@
                         android:layout_height="match_parent"
                         android:text="Weather"/>
 
+                    <TextView
+                        android:id="@+id/current_latitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Latitude"/>
+
+                    <TextView
+                        android:id="@+id/current_longitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Longitude"/>
+
                 </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>

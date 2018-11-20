@@ -1,30 +1,22 @@
 package com.example.ben.kameleon;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.transition.Slide;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,12 +40,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 public class MainFragment extends Fragment implements View.OnClickListener {
 
     private BroadcastReceiver broadcastReceiver;
-    boolean actiavted;
+    boolean activated;
 
     @Nullable
     @Override
@@ -107,8 +97,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",true));
         tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",true));
 
-        if(!runtimePermissions())
-            actiavted = true;
+        TextView latitudeText = v.findViewById(R.id.current_latitude);
+        TextView longitudeText = v.findViewById(R.id.current_longitude);
+
+        if(!runtimePermissions()) {
+            activated = true;
+            // Restores user's last location in settings
+            latitudeText.setText(mPreferences.getString("latitude", "0"));
+            longitudeText.setText(mPreferences.getString("longitude", "0"));
+        }
 
 
         getWeatherData();
@@ -117,31 +114,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
-    @Override
-    public void onResume() {
 
-        final TextView gpsCoordinatesText = getView().findViewById(R.id.gps_refresh_coords);
-
-        super.onResume();
-        if(broadcastReceiver == null){
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    gpsCoordinatesText.setText("Latitude: " + intent.getExtras().get("latitude") + "\n" + "Longitude: " + intent.getExtras().get("longitude"));
-                }
-            };
-        }
-
-        getActivity().registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(broadcastReceiver != null) {
-            getActivity().unregisterReceiver(broadcastReceiver);
-        }
-    }
 
 
 
@@ -149,7 +122,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == 100) {
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                actiavted = true;
+                activated = true;
             }
             else {
                 runtimePermissions();
@@ -183,16 +156,23 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         Button wifiButton = getView().findViewById(R.id.wifi_mode_button);
         Button tempButton = getView().findViewById(R.id.temp_mode_button);
 
+        // Creates a new shared preferences file that allows user preferences to be stored within the application
+        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+
+
         switch (view.getId()) {
             case R.id.activate_button:
                 Toast.makeText(getActivity(), "Activated", Toast.LENGTH_SHORT).show();
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
 
-                if (actiavted == true) {
+                if (activated == true) {
                     Intent i = new Intent(getActivity(), LocationService.class);
                     getActivity().startService(i);
                 }
+
+
+
 
 
                 break;
@@ -202,7 +182,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 activateButton.setEnabled(true);
                 deactivateButton.setEnabled(false);
 
-                if (actiavted == true) {
+                if (activated == true) {
                     Intent i = new Intent(getActivity(), LocationService.class);
                     getActivity().stopService(i);
                 }
