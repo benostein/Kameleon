@@ -100,13 +100,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         TextView latitudeText = v.findViewById(R.id.current_latitude);
         TextView longitudeText = v.findViewById(R.id.current_longitude);
 
-        if(!runtimePermissions()) {
-            activated = true;
-            // Restores user's last location in settings
-            latitudeText.setText(mPreferences.getString("latitude", "0"));
-            longitudeText.setText(mPreferences.getString("longitude", "0"));
-        }
+//        if(!runtimePermissions()) {
+//            activated = true;
+//            // Restores user's last location in settings
+//            latitudeText.setText(mPreferences.getString("latitude", "0"));
+//            longitudeText.setText(mPreferences.getString("longitude", "0"));
+//        }
 
+        latitudeText.setText(mPreferences.getString("latitude", "0"));
+        longitudeText.setText(mPreferences.getString("longitude", "0"));
 
         getWeatherData();
 
@@ -166,13 +168,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
 
-                if (activated == true) {
-                    Intent i = new Intent(getActivity(), LocationService.class);
-                    getActivity().startService(i);
-                }
+//                if (activated == true) {
+//                    Intent i = new Intent(getActivity(), LocationService.class);
+//                    getActivity().startService(i);
+//                }
 
+                TextView latitudeText = getView().findViewById(R.id.current_latitude);
+                TextView longitudeText = getView().findViewById(R.id.current_longitude);
 
-
+                latitudeText.setText(mPreferences.getString("latitude","0"));
+                longitudeText.setText(mPreferences.getString("longitude","0"));
 
 
                 break;

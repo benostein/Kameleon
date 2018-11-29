@@ -138,18 +138,18 @@ public class SettingsFragment extends Fragment {
             }
         };
 
-        // Checks whether permissions for location and internet have been enabled or not
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
-                }, 10 );
-            }
-        }
-        // If permissions have been granted, configure the gps refresh button
-        else {
-            configureGpsButton();
-        }
+//        // Checks whether permissions for location and internet have been enabled or not
+//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                requestPermissions(new String[]{
+//                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+//                }, 10 );
+//            }
+//        }
+//        // If permissions have been granted, configure the gps refresh button
+//        else {
+//            configureGpsButton();
+//        }
 
         return v;
     }
@@ -159,52 +159,52 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void configureGpsButton() {
-
-        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                        PackageManager.PERMISSION_GRANTED) {
-
-            // Finds the gps refresh button in the XML and gives it a variable to access
-            Button gpsRefreshButton = getView().findViewById(R.id.gps_refresh_button);
-
-            // Listens for when button is pressed
-            gpsRefreshButton.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("MissingPermission")
-                @Override
-                public void onClick(View view) {
-                    // Requests device location using GPS in 1000ms intervals
-                    locationManager.requestLocationUpdates("gps", 1000, 1, locationListener);
-                    try {
-                        // Waits 8 seconds until GPS location has stabilised
-                        Thread.sleep(8000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    // Stops retrieving GPS data
-                    locationManager.removeUpdates(locationListener);
-                }
-
-            });
-        }
-
-        else {
-            requestPermissions(new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
-            }, 10 );
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case 10:
-                // if the permissions have been granted, configure the GPS button
-                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    configureGpsButton();
-                return;
-        }
-    }
+//    private void configureGpsButton() {
+//
+//        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+//                PackageManager.PERMISSION_GRANTED &&
+//                ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+//                        PackageManager.PERMISSION_GRANTED) {
+//
+//            // Finds the gps refresh button in the XML and gives it a variable to access
+//            Button gpsRefreshButton = getView().findViewById(R.id.gps_refresh_button);
+//
+//            // Listens for when button is pressed
+//            gpsRefreshButton.setOnClickListener(new View.OnClickListener() {
+//                @SuppressLint("MissingPermission")
+//                @Override
+//                public void onClick(View view) {
+//                    // Requests device location using GPS in 1000ms intervals
+//                    locationManager.requestLocationUpdates("gps", 1000, 1, locationListener);
+//                    try {
+//                        // Waits 8 seconds until GPS location has stabilised
+//                        Thread.sleep(8000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    // Stops retrieving GPS data
+//                    locationManager.removeUpdates(locationListener);
+//                }
+//
+//            });
+//        }
+//
+//        else {
+//            requestPermissions(new String[]{
+//                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+//            }, 10 );
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode){
+//            case 10:
+//                // if the permissions have been granted, configure the GPS button
+//                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+//                    configureGpsButton();
+//                return;
+//        }
+//    }
 
 }
