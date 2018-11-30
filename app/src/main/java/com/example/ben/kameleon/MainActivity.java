@@ -45,16 +45,17 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
-    GoogleApiClient mGoogleApiClient;
-
-    ProgressBar _progressBar;
-    Location mLastLocation;
-    LocationRequest mLocationRequest;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     // Button weatherButton;
 
@@ -90,24 +91,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        wifiButton.setOnClickListener(this);
 //        tempButton.setOnClickListener(this);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mFusedLocationClient = getFusedLocationProviderClient(this);
 
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-            getLocation();
-        }
-        else {
-            Toast.makeText(this, "Not Connected!", Toast.LENGTH_SHORT).show();
-        }
+        getLastLocation();
 
 
     }
-
-
 
 
 //    @Override
@@ -189,159 +178,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
     }
 
+    public void getLastLocation() {
+        // Get last known recent location using new Google Play Services SDK (v11+)
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
 
-    /*Ending the updates for the location service*/
-    @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        settingRequest();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Toast.makeText(this, "Connection Suspended!", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this, "Connection Failed!", Toast.LENGTH_SHORT).show();
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, 90000);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.i("Current Location", "Location services connection failed with code " + connectionResult.getErrorCode());
-        }
-    }
-
-    /*Method to get the enable location settings dialog*/
-    public void settingRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);    // 10 seconds, in milliseconds
-        mLocationRequest.setFastestInterval(1000);   // 1 second, in milliseconds
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
-
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
-                        builder.build());
-
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-
-            @Override
-            public void onResult(@NonNull LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                final LocationSettingsStates state = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can
-                        // initialize location requests here.
-                        getLocation();
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied, but this can be fixed
-                        // by showing the user a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(MainActivity.this, 1000);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
+        // TODO Add permission check
+        locationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // GPS location can be null if GPS is switched off
+                        if (location != null) {
+                            onLocationChanged(location.getLatitude(), location.getLongitude());
                         }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way
-                        // to fix the settings so we won't show the dialog.
-                        break;
-                }
-            }
-
-        });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    }
+                });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
-        switch (requestCode) {
-            case 1000:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        // All required changes were successfully made
-                        getLocation();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        // The user was asked to change settings, but chose not to
-                        Toast.makeText(this, "Location Service not Enabled", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-        }
-    }
 
-    public void getLocation() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        } else {
-            /*Getting the location after acquiring location service*/
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
+    public void onLocationChanged(double latitude, double longitude) {
 
-            if (mLastLocation != null) {
-                _progressBar.setVisibility(View.INVISIBLE);
-
-                double latitude = mLastLocation.getLatitude();
-                double longitude = mLastLocation.getLongitude();
-
-                updateStoredCoordinates(latitude, longitude);
-
-            }
-
-            else {
-                /*if there is no last known location. Which means the device has no data for the loction currently.
-                 * So we will get the current location.
-                 * For this we'll implement Location Listener and override onLocationChanged*/
-                Log.i("Current Location", "No data for location found");
-
-                if (!mGoogleApiClient.isConnected())
-                    mGoogleApiClient.connect();
-
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, MainActivity.this);
-            }
-        }
-    }
-
-    /*When Location changes, this method get called. */
-    @Override
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        _progressBar.setVisibility(View.INVISIBLE);
-
-        double latitude = mLastLocation.getLatitude();
-        double longitude = mLastLocation.getLongitude();
-
-        updateStoredCoordinates(latitude, longitude);
-    }
-
-    public void updateStoredCoordinates(double latitude, double longitude) {
+        Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
 
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();

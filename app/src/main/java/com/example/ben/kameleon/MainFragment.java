@@ -176,8 +176,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 TextView latitudeText = getView().findViewById(R.id.current_latitude);
                 TextView longitudeText = getView().findViewById(R.id.current_longitude);
 
-                latitudeText.setText(mPreferences.getString("latitude","0"));
-                longitudeText.setText(mPreferences.getString("longitude","0"));
+                getWeatherData();
 
 
                 break;
