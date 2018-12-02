@@ -1,21 +1,19 @@
 package com.example.ben.kameleon;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.app.ActivityManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -28,23 +26,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -56,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout mDrawerLayout;
     private FusedLocationProviderClient mFusedLocationClient;
+    private WallpaperService mWallpaperService;
+    private static final String TAG = "MainActivity";
+
 
     // Button weatherButton;
 
@@ -91,12 +77,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        wifiButton.setOnClickListener(this);
 //        tempButton.setOnClickListener(this);
 
+        // Requests use of GPS coordinates
+        if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+                }, 10 );
+            }
+        }
+
         mFusedLocationClient = getFusedLocationProviderClient(this);
 
         getLastLocation();
 
+        // Creates a new shared preferences file that allows user preferences to be stored within the application
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+
+        if (mPreferences.getBoolean("selected_activate_button",true)) {
+            scheduleJob(navigationView);
+        }
 
     }
+
+
+    public void scheduleJob(View v) {
+        ComponentName componentName = new ComponentName(this, WallpaperService.class);
+        JobInfo info = new JobInfo.Builder(100, componentName)
+                .setPeriodic(30 * 1000)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPersisted(true)
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode = scheduler.schedule(info);
+        if (resultCode == JobScheduler.RESULT_SUCCESS) {
+            Log.d(TAG, "Job scheduled");
+        }
+        else {
+            Log.d(TAG, "Job scheduling failed");
+        }
+    }
+
+    public void cancelJob(View v) {
+        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        scheduler.cancel(100);
+        Log.d(TAG, "Job cancelled");
+    }
+
+
 
 
 //    @Override
@@ -182,30 +209,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Get last known recent location using new Google Play Services SDK (v11+)
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
 
-        // TODO Add permission check
-        locationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // GPS location can be null if GPS is switched off
-                        if (location != null) {
-                            onLocationChanged(location.getLatitude(), location.getLongitude());
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Location has not been enabled", Toast.LENGTH_LONG).show();
+            return  ;
+        }
+        // If permissions have been granted, configure the gps refresh button
+        else {
+            locationClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // GPS location can be null if GPS is switched off
+                            if (location != null) {
+                                onLocationChanged(location.getLatitude(), location.getLongitude());
+                            }
                         }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
-                        e.printStackTrace();
-                    }
-                });
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                            e.printStackTrace();
+                        }
+                    });
+        }
     }
 
 
     public void onLocationChanged(double latitude, double longitude) {
 
-        Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
+        // Shows latitude for testing purposes
+        // Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
 
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();

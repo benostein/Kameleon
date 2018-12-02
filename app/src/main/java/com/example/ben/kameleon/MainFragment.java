@@ -42,7 +42,6 @@ import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
-    private BroadcastReceiver broadcastReceiver;
     boolean activated;
 
     @Nullable
@@ -176,7 +175,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 TextView latitudeText = getView().findViewById(R.id.current_latitude);
                 TextView longitudeText = getView().findViewById(R.id.current_longitude);
 
+                // Calls the getLastLocation method from the main activity
+                ((MainActivity) getActivity()).getLastLocation();
                 getWeatherData();
+
+
+                ((MainActivity) getActivity()).scheduleJob(view);
+
 
 
                 break;
@@ -186,10 +191,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 activateButton.setEnabled(true);
                 deactivateButton.setEnabled(false);
 
-                if (activated == true) {
-                    Intent i = new Intent(getActivity(), LocationService.class);
-                    getActivity().stopService(i);
-                }
+                ((MainActivity) getActivity()).cancelJob(view);
 
                 break;
 
