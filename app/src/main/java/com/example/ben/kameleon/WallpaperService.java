@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,13 +20,14 @@ import java.util.TimerTask;
 public class WallpaperService extends JobService {
 
     private static final String TAG = "WallpaperJobService";
+    private Random rand = new Random();
     private boolean jobCancelled = false;
     public static Integer[] weatherWallpapers = {
 
-            R.drawable.img_wallpaper_801, R.drawable.img_wallpaper_601, R.drawable.img_wallpaper_200
+            R.drawable.img_wallpaper_801, R.drawable.img_wallpaper_601, R.drawable.img_wallpaper_200, R.drawable.img_wallpaper_500, R.drawable.img_wallpaper_800
 
     };
-    int i = 1;
+
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
@@ -38,17 +40,14 @@ public class WallpaperService extends JobService {
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
 
-
         try {
-            myWallpaperManager.setResource(+ weatherWallpapers[i]);
+            myWallpaperManager.setResource(+ getRandomWallpaper());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        i++;
-        if (i >= weatherWallpapers.length){
-            i=0;
-        }
+        
+
     }
 
     @Override
@@ -56,5 +55,9 @@ public class WallpaperService extends JobService {
         Log.d(TAG, "Job cancelled before complete");
         jobCancelled = true;
         return true;
+    }
+
+    public int getRandomWallpaper(){
+        return weatherWallpapers[rand.nextInt(weatherWallpapers.length)];
     }
 }

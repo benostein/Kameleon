@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
 
         if (mPreferences.getBoolean("selected_activate_button",true)) {
+            // If the app has been activated, schedule the wallpaper service job
             scheduleJob(navigationView);
         }
 
@@ -101,15 +102,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     public void scheduleJob(View v) {
+        // Links to the WallpaperService class
         ComponentName componentName = new ComponentName(this, WallpaperService.class);
+        // Defines a job that will be executed by the system every 15 minutes and only when the phone is connected to an unmetered network
         JobInfo info = new JobInfo.Builder(100, componentName)
                 .setPeriodic(30 * 1000)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setPersisted(true)
                 .build();
+        // Schedules the job
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode = scheduler.schedule(info);
         if (resultCode == JobScheduler.RESULT_SUCCESS) {
+            // Shows job has been scheduled in app log
             Log.d(TAG, "Job scheduled");
         }
         else {
@@ -118,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void cancelJob(View v) {
+        // When job is cancelled (by clicking deactivate) stop scheduling the service
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         scheduler.cancel(100);
         Log.d(TAG, "Job cancelled");
