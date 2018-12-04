@@ -72,7 +72,8 @@ public class WallpaperService extends JobService {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+// LatLng currentLocation = getLastLocation();
+        // getWeatherData(currentLocation);
         getLastLocation();
         getWeatherData();
 
