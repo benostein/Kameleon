@@ -77,18 +77,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        wifiButton.setOnClickListener(this);
 //        tempButton.setOnClickListener(this);
 
-        // Requests use of GPS coordinates
-        if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
-                }, 10 );
-            }
-        }
+
 
         mFusedLocationClient = getFusedLocationProviderClient(this);
-
-        getLastLocation();
 
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
@@ -104,9 +95,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void scheduleJob(View v) {
         // Links to the WallpaperService class
         ComponentName componentName = new ComponentName(this, WallpaperService.class);
-        // Defines a job that will be executed by the system every 15 minutes and only when the phone is connected to an unmetered network
+        // Defines a job that will be executed by the system every 30 minutes and only when the phone is connected to an unmetered network
         JobInfo info = new JobInfo.Builder(100, componentName)
-                .setPeriodic(30 * 1000)
+                .setPeriodic(10 * 1000)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setPersisted(true)
                 .build();
@@ -211,50 +202,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    public void getLastLocation() {
-        // Get last known recent location using new Google Play Services SDK (v11+)
-        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
 
-        if ( Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Location has not been enabled", Toast.LENGTH_LONG).show();
-            return  ;
-        }
-        // If permissions have been granted, configure the gps refresh button
-        else {
-            locationClient.getLastLocation()
-                    .addOnSuccessListener(new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // GPS location can be null if GPS is switched off
-                            if (location != null) {
-                                onLocationChanged(location.getLatitude(), location.getLongitude());
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("MapDemoActivity", "Error trying to get last GPS location");
-                            e.printStackTrace();
-                        }
-                    });
-        }
-    }
-
-
-    public void onLocationChanged(double latitude, double longitude) {
-
-        // Shows latitude for testing purposes
-        // Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
-
-        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = mPreferences.edit();
-
-        // Stores latitude and longitude values in shared preferences as strings as Android does not support storing doubles and floats would lose accuracy
-        editor.putString("latitude", String.valueOf(latitude));
-        editor.putString("longitude", String.valueOf(longitude));
-        editor.apply();
-    }
 }

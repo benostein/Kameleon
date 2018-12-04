@@ -109,7 +109,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         latitudeText.setText(mPreferences.getString("latitude", "0"));
         longitudeText.setText(mPreferences.getString("longitude", "0"));
 
-        getWeatherData();
+
 
 
         return v;
@@ -163,7 +163,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         switch (view.getId()) {
             case R.id.activate_button:
-                Toast.makeText(getActivity(), "Activated", Toast.LENGTH_SHORT).show();
+
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
 
@@ -175,12 +175,18 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 TextView latitudeText = getView().findViewById(R.id.current_latitude);
                 TextView longitudeText = getView().findViewById(R.id.current_longitude);
 
-                // Calls the getLastLocation method from the main activity
-                ((MainActivity) getActivity()).getLastLocation();
-                getWeatherData();
-
+                // Requests use of GPS coordinates
+                if ( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+                        }, 10 );
+                    }
+                }
 
                 ((MainActivity) getActivity()).scheduleJob(view);
+
+                Toast.makeText(getActivity(), "Activated", Toast.LENGTH_SHORT).show();
 
 
 
@@ -275,74 +281,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         transaction.commit();
     }
 
-    public void getWeatherData() {
 
-        // Creates a new shared preferences file that allows user preferences to be stored within the application
-        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-
-        // Retrieves location coordinates from SharedPreferences and converts them into a double
-        double latitude = Double.valueOf(mPreferences.getString("latitude","0"));
-        double longitude = Double.valueOf(mPreferences.getString("longitude","0"));
-
-        // Pulls in the API key from the BuildConfig file
-        String apiKey = BuildConfig.openWeatherMapApiKey;
-
-        // Forms a url to the OpenWeatherMap API and concatenates the retrieved latitude and longitude coordinates as well as the API key to retrieve relevant weather data 
-        String weatherDataUrl ="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=imperial";
-
-        // Creates a JsonObjectResponse that performs the onResponse() method once it has received a JsonObject from the url specified
-        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, weatherDataUrl, null, new Response.Listener<JSONObject>() {
-            // When a JsonObject is received, do this:
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    // Locates the TextViews within the fragment and assigns them to variables so they are easier to access
-                    TextView currentCity = getView().findViewById(R.id.current_city);
-                    TextView currentTemp = getView().findViewById(R.id.current_temp);
-                    TextView currentDate = getView().findViewById(R.id.current_date);
-                    TextView currentWeather = getView().findViewById(R.id.current_weather);
-
-                    // Retrieves specific elements from the JsonObject and assings them to their corresponding variable names
-                    JSONObject main_object = response.getJSONObject("main");
-                    JSONArray array = response.getJSONArray("weather");
-                    JSONObject object = array.getJSONObject(0);
-                    String temp = String.valueOf(main_object.getDouble("temp"));
-                    String description = object.getString("description");
-                    String city = response.getString("name");
-
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-                    String formatted_date = sdf.format(calendar.getTime());
-
-                    double temp_int = Double.parseDouble(temp);
-                    double centi = (temp_int - 32) /1.8000;
-                    centi = Math.round(centi);
-                    int i = (int)centi;
-
-                    currentCity.setText(city);
-                    currentTemp.setText(String.valueOf(i) + "°");
-                    currentWeather.setText(description.substring(0,1).toUpperCase() + description.substring(1));
-                    currentDate.setText(formatted_date);
-
-                }
-
-                catch(JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-                , new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        queue.add(jor);
-
-    }
 
 }
 
