@@ -280,23 +280,29 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
 
+        // Retrieves location coordinates from SharedPreferences and converts them into a double
         double latitude = Double.valueOf(mPreferences.getString("latitude","0"));
         double longitude = Double.valueOf(mPreferences.getString("longitude","0"));
 
+        // Pulls in the API key from the BuildConfig file
         String apiKey = BuildConfig.openWeatherMapApiKey;
 
-        String url ="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=imperial";
+        // Forms a url to the OpenWeatherMap API and concatenates the retrieved latitude and longitude coordinates as well as the API key to retrieve relevant weather data 
+        String weatherDataUrl ="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=imperial";
 
-        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        // Creates a JsonObjectResponse that performs the onResponse() method once it has received a JsonObject from the url specified
+        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, weatherDataUrl, null, new Response.Listener<JSONObject>() {
+            // When a JsonObject is received, do this:
             @Override
             public void onResponse(JSONObject response) {
                 try {
-
+                    // Locates the TextViews within the fragment and assigns them to variables so they are easier to access
                     TextView currentCity = getView().findViewById(R.id.current_city);
                     TextView currentTemp = getView().findViewById(R.id.current_temp);
                     TextView currentDate = getView().findViewById(R.id.current_date);
                     TextView currentWeather = getView().findViewById(R.id.current_weather);
 
+                    // Retrieves specific elements from the JsonObject and assings them to their corresponding variable names
                     JSONObject main_object = response.getJSONObject("main");
                     JSONArray array = response.getJSONArray("weather");
                     JSONObject object = array.getJSONObject(0);
