@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
 
-        if (mPreferences.getBoolean("selected_activate_button",true)) {
+        if (mPreferences.getBoolean("selected_activate_button",false)) {
             // If the app has been activated, schedule the wallpaper service job
             scheduleJob(navigationView);
         }
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ComponentName componentName = new ComponentName(this, WallpaperService.class);
         // Defines a job that will be executed by the system every 30 minutes and only when the phone is connected to an unmetered network
         JobInfo info = new JobInfo.Builder(100, componentName)
-                .setPeriodic(10 * 1000)
+                .setPeriodic(60 * 60 * 1000)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setPersisted(true)
                 .build();

@@ -55,29 +55,46 @@ public class WallpaperService extends JobService {
     };
 
 
+
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "WallpaperService has started");
-        changeWallpaper(jobParameters);
-        return true;
-    }
 
-    private void changeWallpaper(final JobParameters jobParameters) {
-        WallpaperManager myWallpaperManager
-                = WallpaperManager.getInstance(getApplicationContext());
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
 
-        try {
-            myWallpaperManager.setResource(+ getRandomWallpaper());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-// LatLng currentLocation = getLastLocation();
-        // getWeatherData(currentLocation);
         getLastLocation();
         getWeatherData();
 
+        String conditionId = (mPreferences.getString("condition_id","801"));
+
+        changeWallpaper(jobParameters, conditionId);
+        return true;
     }
+
+    private void changeWallpaper(final JobParameters jobParameters, String conditionId) {
+        WallpaperManager myWallpaperManager
+                = WallpaperManager.getInstance(getApplicationContext());
+
+
+            switch(conditionId) {
+                case "801":
+                    try {
+                        myWallpaperManager.setResource(+ R.drawable.img_wallpaper_801);
+                    }
+                    catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+
+            }
+
+        }
+
+// LatLng currentLocation = getLastLocation();
+        // getWeatherData(currentLocation);
+
+
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
@@ -125,11 +142,13 @@ public class WallpaperService extends JobService {
 
     public void onLocationChanged(double latitude, double longitude) {
 
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = mPreferences.edit();
+
         // Shows latitude for testing purposes
         // Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
 
-        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = mPreferences.edit();
+
 
         // Stores latitude and longitude values in shared preferences as strings as Android does not support storing doubles and floats would lose accuracy
         editor.putString("latitude", String.valueOf(latitude));
@@ -139,8 +158,8 @@ public class WallpaperService extends JobService {
 
     public void getWeatherData() {
 
-        // Creates a new shared preferences file that allows user preferences to be stored within the application
-        SharedPreferences mPreferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = mPreferences.edit();
 
         // Retrieves location coordinates from SharedPreferences and converts them into a double
         double latitude = Double.valueOf(mPreferences.getString("latitude","0"));
@@ -171,6 +190,10 @@ public class WallpaperService extends JobService {
                     String temp = String.valueOf(main_object.getDouble("temp"));
                     String description = object.getString("description");
                     String city = response.getString("name");
+                    String weatherCode = object.getString("id");
+
+                    editor.putString("condition_id", String.valueOf(weatherCode));
+                    editor.apply();
 
                     Calendar calendar = Calendar.getInstance();
                     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
@@ -181,7 +204,7 @@ public class WallpaperService extends JobService {
                     centi = Math.round(centi);
                     int i = (int)centi;
 
-                    Toast.makeText(getApplicationContext(), String.valueOf(i), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), String.valueOf(weatherCode), Toast.LENGTH_LONG).show();
 
 //                    currentCity.setText(city);
 //                    currentTemp.setText(String.valueOf(i) + "°");
