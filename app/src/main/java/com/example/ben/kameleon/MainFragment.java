@@ -96,21 +96,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",true));
         tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",true));
 
-        TextView latitudeText = v.findViewById(R.id.current_latitude);
-        TextView longitudeText = v.findViewById(R.id.current_longitude);
-
-//        if(!runtimePermissions()) {
-//            activated = true;
-//            // Restores user's last location in settings
-//            latitudeText.setText(mPreferences.getString("latitude", "0"));
-//            longitudeText.setText(mPreferences.getString("longitude", "0"));
-//        }
-
-        latitudeText.setText(mPreferences.getString("latitude", "0"));
-        longitudeText.setText(mPreferences.getString("longitude", "0"));
-
-
-
 
         return v;
     }
@@ -167,13 +152,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
 
-//                if (activated == true) {
-//                    Intent i = new Intent(getActivity(), LocationService.class);
-//                    getActivity().startService(i);
-//                }
-
-                TextView latitudeText = getView().findViewById(R.id.current_latitude);
-                TextView longitudeText = getView().findViewById(R.id.current_longitude);
 
                 // Requests use of GPS coordinates
                 if ( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {

@@ -56,12 +56,26 @@ public class WallpaperService extends JobService {
 
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
 
-        getLastLocation();
-        getWeatherData();
 
-        String conditionId = (mPreferences.getString("condition_id","801"));
+        // If weather mode is selected, change the wallpaper depending on the weather condition
+        if (mPreferences.getBoolean("selected_weather_button", true)) {
+            Log.d(TAG, "Weather mode has started");
 
-        changeWallpaper(jobParameters, conditionId);
+            Toast.makeText(getApplicationContext(), "Weather mode has started", Toast.LENGTH_LONG).show();
+
+            getLastLocation();
+            getWeatherData();
+            String conditionId = (mPreferences.getString("condition_id","801"));
+
+            changeWallpaper(jobParameters, conditionId);
+        }
+        else {
+            Log.d(TAG, "Weather mode did not start");
+
+            Toast.makeText(getApplicationContext(), "Weather mode did not start", Toast.LENGTH_LONG).show();
+        }
+
+
         return true;
     }
 
@@ -145,8 +159,10 @@ public class WallpaperService extends JobService {
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
 
+        int weatherConditionWallpaper = getResources().getIdentifier("img_wall_weather_" + weatherConditionIds.get(conditionId),"drawable", getPackageName());
+
         try {
-            myWallpaperManager.setResource(+R.drawable.img_wall_weather_801);
+            myWallpaperManager.setResource(+weatherConditionWallpaper);
         }
         catch (IOException e) {
             // TODO Auto-generated catch block
@@ -240,11 +256,6 @@ public class WallpaperService extends JobService {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    // Locates the TextViews within the fragment and assigns them to variables so they are easier to access
-//                    TextView currentCity = getView().findViewById(R.id.current_city);
-//                    TextView currentTemp = getView().findViewById(R.id.current_temp);
-//                    TextView currentDate = getView().findViewById(R.id.current_date);
-//                    TextView currentWeather = getView().findViewById(R.id.current_weather);
 
                     // Retrieves specific elements from the JsonObject and assings them to their corresponding variable names
                     JSONObject main_object = response.getJSONObject("main");
@@ -267,7 +278,8 @@ public class WallpaperService extends JobService {
                     centi = Math.round(centi);
                     int i = (int)centi;
 
-                    Toast.makeText(getApplicationContext(), String.valueOf(weatherCode), Toast.LENGTH_LONG).show();
+                    // Toast for testing
+                    // Toast.makeText(getApplicationContext(), String.valueOf(weatherCode), Toast.LENGTH_LONG).show();
 
 //                    currentCity.setText(city);
 //                    currentTemp.setText(String.valueOf(i) + "°");

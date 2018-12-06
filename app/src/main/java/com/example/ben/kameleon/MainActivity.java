@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ComponentName componentName = new ComponentName(this, WallpaperService.class);
         // Defines a job that will be executed by the system every 30 minutes and only when the phone is connected to an unmetered network
         JobInfo info = new JobInfo.Builder(100, componentName)
-                .setPeriodic(60 * 60 * 1000)
+                //.setPeriodic(45 * 60 * 1000)
+                .setPeriodic(10 * 1000)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setPersisted(true)
                 .build();
@@ -120,26 +121,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d(TAG, "Job cancelled");
     }
 
-
-
-
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.weather_mode_button:
-//                Toast.makeText(this, "Tester!", Toast.LENGTH_LONG).show();
-//                break;
-//            case R.id.wifi_mode_button:
-//                // do your code
-//                break;
-//            case R.id.temp_mode_button:
-//                // do your code
-//                break;
-//            default:
-//                break;
-//        }
-//
-//    }
 
 
     // Allows menu button to open navigation panel when pressed
