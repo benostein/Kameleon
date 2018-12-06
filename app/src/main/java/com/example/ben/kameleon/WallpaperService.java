@@ -1,21 +1,16 @@
 package com.example.ben.kameleon;
 
-import android.app.Service;
 import android.app.WallpaperManager;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,10 +30,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -50,7 +44,7 @@ public class WallpaperService extends JobService {
     private boolean jobCancelled = false;
     public static Integer[] weatherWallpapers = {
 
-            R.drawable.img_wallpaper_801, R.drawable.img_wallpaper_601, R.drawable.img_wallpaper_200, R.drawable.img_wallpaper_500, R.drawable.img_wallpaper_800
+            R.drawable.img_wall_weather_801, R.drawable.img_wall_weather_601, R.drawable.img_wall_weather_200, R.drawable.img_wall_weather_500, R.drawable.img_wall_weather_800
 
     };
 
@@ -72,24 +66,93 @@ public class WallpaperService extends JobService {
     }
 
     private void changeWallpaper(final JobParameters jobParameters, String conditionId) {
+
+        // HashMap to map all weather condition ids to specific images
+        HashMap<String, String> weatherConditionIds = new HashMap<>();
+
+        // Thunderstorm
+        weatherConditionIds.put("200", "200");
+        weatherConditionIds.put("201", "200");
+        weatherConditionIds.put("202", "200");
+        weatherConditionIds.put("210", "200");
+        weatherConditionIds.put("211", "200");
+        weatherConditionIds.put("212", "200");
+        weatherConditionIds.put("221", "200");
+        weatherConditionIds.put("230", "200");
+        weatherConditionIds.put("231", "200");
+        weatherConditionIds.put("232", "200");
+
+        // Drizzle
+        weatherConditionIds.put("300", "500");
+        weatherConditionIds.put("301", "500");
+        weatherConditionIds.put("302", "500");
+        weatherConditionIds.put("310", "500");
+        weatherConditionIds.put("311", "500");
+        weatherConditionIds.put("312", "500");
+        weatherConditionIds.put("313", "500");
+        weatherConditionIds.put("314", "500");
+        weatherConditionIds.put("321", "500");
+
+        // Rain
+        weatherConditionIds.put("500", "500");
+        weatherConditionIds.put("501", "500");
+        weatherConditionIds.put("502", "500");
+        weatherConditionIds.put("503", "500");
+        weatherConditionIds.put("504", "500");
+        weatherConditionIds.put("511", "500");
+        weatherConditionIds.put("520", "500");
+        weatherConditionIds.put("521", "500");
+        weatherConditionIds.put("522", "500");
+        weatherConditionIds.put("531", "500");
+
+        // Snow
+        weatherConditionIds.put("600", "601");
+        weatherConditionIds.put("601", "601");
+        weatherConditionIds.put("602", "601");
+        weatherConditionIds.put("611", "601");
+        weatherConditionIds.put("612", "601");
+        weatherConditionIds.put("615", "601");
+        weatherConditionIds.put("616", "601");
+        weatherConditionIds.put("620", "601");
+        weatherConditionIds.put("621", "601");
+        weatherConditionIds.put("622", "601");
+
+
+        // Mist
+        weatherConditionIds.put("701", "701");
+        weatherConditionIds.put("711", "701");
+        weatherConditionIds.put("721", "701");
+        weatherConditionIds.put("731", "701");
+        weatherConditionIds.put("741", "701");
+        weatherConditionIds.put("751", "701");
+        weatherConditionIds.put("761", "701");
+        weatherConditionIds.put("762", "701");
+        weatherConditionIds.put("771", "701");
+        weatherConditionIds.put("781", "701");
+
+        // Clear sky
+        weatherConditionIds.put("800", "800");
+
+        // Partial sun
+        weatherConditionIds.put("801", "801");
+        weatherConditionIds.put("802", "801");
+
+        // Overcast
+        weatherConditionIds.put("803", "803");
+        weatherConditionIds.put("804", "803");
+
+
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
 
-
-            switch(conditionId) {
-                case "801":
-                    try {
-                        myWallpaperManager.setResource(+ R.drawable.img_wallpaper_801);
-                    }
-                    catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-
-            }
-
+        try {
+            myWallpaperManager.setResource(+R.drawable.img_wall_weather_801);
         }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 // LatLng currentLocation = getLastLocation();
         // getWeatherData(currentLocation);
