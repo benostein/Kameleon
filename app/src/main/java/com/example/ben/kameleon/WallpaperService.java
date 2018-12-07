@@ -58,10 +58,10 @@ public class WallpaperService extends JobService {
 
 
         // If weather mode is selected, change the wallpaper depending on the weather condition
-        if (mPreferences.getBoolean("selected_weather_button", true)) {
+        if (!mPreferences.getBoolean("selected_weather_button", true)) {
             Log.d(TAG, "Weather mode has started");
 
-            Toast.makeText(getApplicationContext(), "Weather mode has started", Toast.LENGTH_LONG).show();
+            // Toast.makeText(getApplicationContext(), "Weather mode has started", Toast.LENGTH_LONG).show();
 
             getLastLocation();
             getWeatherData();
