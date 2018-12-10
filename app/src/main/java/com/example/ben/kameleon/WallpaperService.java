@@ -40,7 +40,6 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class WallpaperService extends JobService {
 
     private static final String TAG = "WallpaperJobService";
-    private Random rand = new Random();
     private boolean jobCancelled = false;
     public static Integer[] weatherWallpapers = {
 
@@ -69,10 +68,14 @@ public class WallpaperService extends JobService {
 
             changeWallpaper(jobParameters, conditionId);
         }
-        else {
-            Log.d(TAG, "Weather mode did not start");
+        if (!mPreferences.getBoolean("selected_wifi_button", true)) {
+            Log.d(TAG, "Wi-Fi mode has started");
 
-            Toast.makeText(getApplicationContext(), "Weather mode did not start", Toast.LENGTH_LONG).show();
+            //getWifiNetworks();
+
+        }
+        else {
+            Log.d(TAG, "No mode selected");
         }
 
 
@@ -159,6 +162,8 @@ public class WallpaperService extends JobService {
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
 
+        //TODO Change image style depending on image pack selected
+
         int weatherConditionWallpaper = getResources().getIdentifier("img_wall_weather_" + weatherConditionIds.get(conditionId),"drawable", getPackageName());
 
         try {
@@ -180,10 +185,6 @@ public class WallpaperService extends JobService {
         Log.d(TAG, "Job cancelled before complete");
         jobCancelled = true;
         return true;
-    }
-
-    public int getRandomWallpaper(){
-        return weatherWallpapers[rand.nextInt(weatherWallpapers.length)];
     }
 
     public void getLastLocation() {

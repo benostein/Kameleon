@@ -210,15 +210,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
             case R.id.weather_mode_card:
                 // Changes view to weather mode fragment
-                WeatherModeFragment fragment = new WeatherModeFragment();
-//                fragment.setEnterTransition(new Slide(Gravity.END));
-//                fragment.setExitTransition(new Slide(Gravity.START));
-
-                replaceFragment(fragment);
+                WeatherModeFragment weatherFragment = new WeatherModeFragment();
+                replaceFragment(weatherFragment);
                 break;
             case R.id.wifi_mode_card:
-                // Displays toast message
-                Toast.makeText(getActivity(), "Wi-Fi Mode Card", Toast.LENGTH_SHORT).show();
+                // Changes view to weather mode fragment
+                WifiModeFragment wifiFragment = new WifiModeFragment();
+                replaceFragment(wifiFragment);
                 break;
             case R.id.temp_mode_card:
                 // Displays toast message
