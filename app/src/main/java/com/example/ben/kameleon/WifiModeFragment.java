@@ -41,6 +41,10 @@ import java.util.Map;
 
 public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private  RecyclerView.LayoutManager mLayoutManager;
+
 
     @Nullable
     @Override
@@ -92,6 +96,20 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
                 return false;
             }
         });
+
+        ArrayList<WifiItem> wifiList = new ArrayList<>();
+        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "Stein-2G"));
+        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "Stein-5G"));
+        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "DFS Wifi"));
+
+        mRecyclerView = v.findViewById(R.id.my_recycler_view);
+        // Change if recycler view changes in size
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mAdapter = new WifiAdapter(wifiList);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
 
 
         return v;
