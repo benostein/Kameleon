@@ -73,7 +73,8 @@
                                 android:layout_toEndOf="@+id/weather_mode_icon"
                                 android:paddingBottom="5dp"
                                 android:text="@string/weather_mode"
-                                android:textSize="20sp" />
+                                android:textSize="20sp"
+                                android:textColor="@color/colorDarkText" />
 
                             <TextView
                                 android:id="@+id/weather_mode_desc"
@@ -83,7 +84,7 @@
                                 android:layout_toEndOf="@+id/weather_mode_icon"
                                 android:layout_toStartOf="@id/weather_mode_button"
                                 android:text="@string/weather_mode_desc"
-                                android:textColor="#8b8b8b"
+                                android:textColor="@color/colorLightText"
                                 android:textSize="14sp" />
 
                             <Button
@@ -128,7 +129,8 @@
                                 android:layout_toEndOf="@+id/wifi_mode_icon"
                                 android:paddingBottom="5dp"
                                 android:text="@string/wifi_mode"
-                                android:textSize="20sp" />
+                                android:textSize="20sp"
+                                android:textColor="@color/colorDarkText" />
 
                             <TextView
                                 android:id="@+id/wifi_mode_desc"
@@ -138,7 +140,7 @@
                                 android:layout_toEndOf="@+id/wifi_mode_icon"
                                 android:layout_toStartOf="@id/wifi_mode_button"
                                 android:text="@string/wifi_mode_desc"
-                                android:textColor="#8b8b8b"
+                                android:textColor="@color/colorLightText"
                                 android:textSize="14sp" />
 
                             <Button
@@ -183,7 +185,8 @@
                                 android:layout_toEndOf="@+id/temp_mode_icon"
                                 android:paddingBottom="5dp"
                                 android:text="@string/temp_mode"
-                                android:textSize="20sp" />
+                                android:textSize="20sp"
+                                android:textColor="@color/colorDarkText" />
 
                             <TextView
                                 android:id="@+id/temp_mode_desc"
@@ -193,7 +196,7 @@
                                 android:layout_toEndOf="@+id/temp_mode_icon"
                                 android:layout_toStartOf="@id/temp_mode_button"
                                 android:text="@string/temp_mode_desc"
-                                android:textColor="#8b8b8b"
+                                android:textColor="@color/colorLightText"
                                 android:textSize="14sp" />
 
                             <Button
