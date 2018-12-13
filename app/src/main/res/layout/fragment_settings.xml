@@ -61,7 +61,8 @@
                             android:layout_toEndOf="@+id/temp_setting_icon"
                             android:paddingBottom="5dp"
                             android:text="@string/temp_setting"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            android:textColor="@color/colorDarkText" />
 
                         <TextView
                             android:id="@+id/temp_setting_desc"
@@ -71,7 +72,7 @@
                             android:layout_toEndOf="@+id/temp_setting_icon"
                             android:layout_toStartOf="@id/temp_setting_spinner"
                             android:text="@string/temp_setting_desc"
-                            android:textColor="#8b8b8b"
+                            android:textColor="@color/colorLightText"
                             android:textSize="14sp" />
 
                         <Spinner
@@ -116,7 +117,8 @@
                             android:layout_toEndOf="@+id/gps_refresh_icon"
                             android:paddingBottom="5dp"
                             android:text="@string/gps_refresh"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            android:textColor="@color/colorDarkText" />
 
                         <TextView
                             android:id="@+id/gps_refresh_desc"
@@ -126,7 +128,7 @@
                             android:layout_toEndOf="@+id/gps_refresh_icon"
                             android:layout_toStartOf="@id/gps_refresh_button"
                             android:text="@string/gps_refresh_desc"
-                            android:textColor="#8b8b8b"
+                            android:textColor="@color/colorLightText"
                             android:textSize="14sp" />
 
                         <TextView
