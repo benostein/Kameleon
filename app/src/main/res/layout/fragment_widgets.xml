@@ -54,7 +54,8 @@
                             android:layout_toEndOf="@+id/weather_widget_icon"
                             android:paddingBottom="5dp"
                             android:text="@string/weather_widget"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            android:textColor="@color/colorDarkText" />
 
                         <TextView
                             android:id="@+id/weather_widget_desc"
@@ -64,7 +65,7 @@
                             android:layout_toEndOf="@+id/weather_widget_icon"
                             android:layout_toStartOf="@id/weather_widget_spinner"
                             android:text="@string/weather_widget_desc"
-                            android:textColor="#8b8b8b"
+                            android:textColor="@color/colorLightText"
                             android:textSize="14sp" />
 
                         <Spinner
