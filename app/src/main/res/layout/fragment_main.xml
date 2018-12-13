@@ -93,7 +93,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:text="@string/mode_button"/>
+                                android:text="@string/mode_button"
+                                android:theme="@style/selectButton"/>
 
                         </RelativeLayout>
 
@@ -149,7 +150,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:text="@string/mode_button"/>
+                                android:text="@string/mode_button"
+                                android:theme="@style/selectButton"/>
 
                         </RelativeLayout>
 
@@ -205,7 +207,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:text="@string/mode_button"/>
+                                android:text="@string/mode_button"
+                                android:theme="@style/selectButton"/>
 
                         </RelativeLayout>
 

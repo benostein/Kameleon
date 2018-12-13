@@ -1,6 +1,6 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Base application theme -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -19,6 +19,12 @@
 
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
+    <!--Button theme-->
+    <style name="selectButton" parent="Theme.AppCompat.Light">
+        <item name="android:button">@color/button_color</item>
+        <!--<item name="colorButtonHighlight">@color/pink</item>-->
     </style>
 
 </resources>
