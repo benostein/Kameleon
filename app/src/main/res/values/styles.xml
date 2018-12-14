@@ -21,10 +21,8 @@
         <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
-    <!--Button theme-->
-    <style name="selectButton" parent="Theme.AppCompat.Light">
-        <item name="android:button">@color/button_color</item>
-        <!--<item name="colorButtonHighlight">@color/pink</item>-->
+    <style name="accentButton" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">@color/colorButton</item>
     </style>
 
 </resources>

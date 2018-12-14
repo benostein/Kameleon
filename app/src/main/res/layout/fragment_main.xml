@@ -58,10 +58,10 @@
 
                             <ImageView
                                 android:id="@+id/weather_mode_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
                                 android:layout_alignParentTop="true"
-                                android:layout_marginTop="6dp"
+                                android:layout_marginTop="2dp"
                                 android:layout_marginEnd="10dp"
                                 android:src="@drawable/icon_weather" />
 
@@ -94,7 +94,8 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
                                 android:text="@string/mode_button"
-                                android:theme="@style/selectButton"/>
+                                android:theme="@style/accentButton"
+                                style="@style/Widget.AppCompat.Button.Colored" />
 
                         </RelativeLayout>
 
@@ -115,9 +116,9 @@
 
                             <ImageView
                                 android:id="@+id/wifi_mode_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:layout_marginTop="2dp"
                                 android:layout_alignParentTop="true"
                                 android:layout_marginEnd="10dp"
                                 android:src="@drawable/icon_wifi" />
@@ -151,7 +152,8 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
                                 android:text="@string/mode_button"
-                                android:theme="@style/selectButton"/>
+                                android:theme="@style/accentButton"
+                                style="@style/Widget.AppCompat.Button.Colored"/>
 
                         </RelativeLayout>
 
@@ -172,9 +174,9 @@
 
                             <ImageView
                                 android:id="@+id/temp_mode_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:layout_marginTop="2dp"
                                 android:layout_alignParentTop="true"
                                 android:layout_marginEnd="10dp"
                                 android:src="@drawable/icon_temp" />
@@ -208,7 +210,8 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
                                 android:text="@string/mode_button"
-                                android:theme="@style/selectButton"/>
+                                android:theme="@style/accentButton"
+                                style="@style/Widget.AppCompat.Button.Colored"/>
 
                         </RelativeLayout>
 

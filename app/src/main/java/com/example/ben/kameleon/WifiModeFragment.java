@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,10 +99,26 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        List<String> ssidList = new ArrayList<>();
+
+        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext()
+                .getSystemService(Context.WIFI_SERVICE);
+        List<WifiConfiguration> configuredList = wifiManager.getConfiguredNetworks();
+
+        for(WifiConfiguration config : configuredList) {
+            ssidList.add(config.SSID);
+        }
+// TODO HERERE
+//        Array sb = new Array();
+//        for (int i = 0; i < configuredList.size(); i++){
+//            sb.append(new Integer(i+1).toString() + ".");
+//            sb.append((configuredList.get(i)).SSID);
+//        }
+
         ArrayList<WifiItem> wifiList = new ArrayList<>();
-        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "Stein-2G"));
-        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "Stein-5G"));
-        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "DFS Wifi"));
+        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, sb[0]));
+//        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "Stein-5G"));
+//        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "DFS Wifi"));
 
         mRecyclerView = v.findViewById(R.id.my_recycler_view);
         // Change if recycler view changes in size
