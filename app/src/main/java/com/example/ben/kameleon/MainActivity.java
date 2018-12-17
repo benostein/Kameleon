@@ -95,11 +95,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void scheduleJob(View v) {
         // Links to the WallpaperService class
         ComponentName componentName = new ComponentName(this, WallpaperService.class);
-        // Defines a job that will be executed by the system every 30 minutes and only when the phone is connected to an unmetered network
+        // Defines job information
         JobInfo info = new JobInfo.Builder(100, componentName)
+                // Executes every 45 minutes (approx)
                 .setPeriodic(45 * 60 * 1000)
-                //.setPeriodic(10 * 1000)
+                // Device must be connected to network for job to run
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                // Ensures the job runs after a reboot.
                 .setPersisted(true)
                 .build();
         // Schedules the job
