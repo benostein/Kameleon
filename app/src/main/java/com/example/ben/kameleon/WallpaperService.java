@@ -226,9 +226,7 @@ public class WallpaperService extends JobService {
         final SharedPreferences.Editor editor = mPreferences.edit();
 
         // Shows latitude for testing purposes
-        // Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
-
-
+        Toast.makeText(this, "Latitude: " + String.valueOf(latitude) + "\n" + "Longitude: " + String.valueOf(longitude), Toast.LENGTH_SHORT).show();
 
         // Stores latitude and longitude values in shared preferences as strings as Android does not support storing doubles and floats would lose accuracy
         editor.putString("latitude", String.valueOf(latitude));
