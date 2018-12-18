@@ -1,16 +1,32 @@
 package com.example.ben.kameleon;
 
-public class WifiItem {
-    private int mImageResource;
-    private String mWifiName;
+import android.graphics.Bitmap;
 
-    public WifiItem(int imageResource, String wifiName) {
-        mImageResource = imageResource;
+public class WifiItem {
+    private int mIconResource;
+    private String mWifiName;
+    private Bitmap mWifiWallpaper;
+
+    public WifiItem(int imageResource, String wifiName, Bitmap wallpaper) {
+        mIconResource = imageResource;
         mWifiName = wifiName;
+        mWifiWallpaper = wallpaper;
+    }
+
+    public void changeIcon(int image) {
+        mIconResource = image;
+    }
+
+    public void setWifiWallpaper(Bitmap wallpaper) {
+        mWifiWallpaper = wallpaper;
+    }
+
+    public Bitmap getWifiWallpaper() {
+        return mWifiWallpaper;
     }
 
     public int getImageResource() {
-        return mImageResource;
+        return mIconResource;
     }
 
     public String getWifiName() {

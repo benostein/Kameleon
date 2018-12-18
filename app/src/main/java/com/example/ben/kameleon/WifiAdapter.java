@@ -13,15 +13,36 @@ import java.util.ArrayList;
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiViewHolder> {
 
     private ArrayList<WifiItem> mWifiList;
+    private OnItemClickListener mListener;
+
+    public  interface OnItemClickListener {
+        void  onItemClick(int position);
+    }
+
+    public  void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
     public static class WifiViewHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
         public TextView  mWifiName;
 
-        public WifiViewHolder(View itemView) {
+        public WifiViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.wifi_image);
             mWifiName = itemView.findViewById(R.id.wifi_name);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -33,7 +54,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiViewHolder
     @Override
     public WifiViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.wifi_item, parent, false);
-        WifiViewHolder wvh = new WifiViewHolder(v);
+        WifiViewHolder wvh = new WifiViewHolder(v, mListener);
         return wvh;
     }
 

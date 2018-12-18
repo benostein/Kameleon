@@ -2,6 +2,7 @@ package com.example.ben.kameleon;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.WallpaperManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +10,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -33,6 +37,11 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,12 +49,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private  RecyclerView.LayoutManager mLayoutManager;
+    private WifiAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<WifiItem> wifiList;
+    private Bitmap selectedImage;
+    File file;
 
 
     @Nullable
@@ -99,26 +113,8 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        List<String> ssidList = new ArrayList<>();
-
-        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext()
-                .getSystemService(Context.WIFI_SERVICE);
-        List<WifiConfiguration> configuredList = wifiManager.getConfiguredNetworks();
-
-        for(WifiConfiguration config : configuredList) {
-            ssidList.add(config.SSID);
-        }
-// TODO HERERE
-//        Array sb = new Array();
-//        for (int i = 0; i < configuredList.size(); i++){
-//            sb.append(new Integer(i+1).toString() + ".");
-//            sb.append((configuredList.get(i)).SSID);
-//        }
-
-        ArrayList<WifiItem> wifiList = new ArrayList<>();
-        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, sb[0]));
-//        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "Stein-5G"));
-//        wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, "DFS Wifi"));
+        createWifiList();
+        //buildRecyclerView();
 
         mRecyclerView = v.findViewById(R.id.my_recycler_view);
         // Change if recycler view changes in size
@@ -129,17 +125,104 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        mAdapter.setOnItemClickListener(new WifiAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, RESULT_OK);
+
+//                try (FileOutputStream out = new FileOutputStream(file)) {
+//                    selectedImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+//                    // PNG is a lossless format, the compression factor (100) is ignored
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+
+                changeIcon(position, R.drawable.ic_home);
+
+                setWallpaper(position, selectedImage);
+
+//                wifiList.get(position).getWifiWallpaper();
+
+                WallpaperManager myWallpaperManager
+                        = WallpaperManager.getInstance(getActivity().getApplicationContext());
+
+                if (selectedImage != null) {
+                    try {
+                        myWallpaperManager.setBitmap(wifiList.get(position).getWifiWallpaper());
+                        Log.d("OnClick", "Wallpaper set");
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+
+
+        if (resultCode == RESULT_OK) {
+            try {
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
+                selectedImage = BitmapFactory.decodeStream(imageStream);
+
+                // https://stackoverflow.com/questions/35522893/android-load-image-from-gallery-and-set-as-background
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();
+            }
+
+        }
+        else {
+            Toast.makeText(getActivity(), "You haven't picked Image",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void loadImagefromGallery(View view) {
+
+    }
+
+    private void createWifiList() {
+        List<String> ssidList = new ArrayList<>();
+        wifiList = new ArrayList<>();
+
+        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        List<WifiConfiguration> configuredList = wifiManager.getConfiguredNetworks();
+
+        for(WifiConfiguration config : configuredList) {
+            ssidList.add(config.SSID.replace("\"", ""));
+        }
+
+        for (int i = 0; i < configuredList.size(); i++){
+            wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, ssidList.get(i), selectedImage));
+        }
+    }
+
+    public void changeIcon(int position, int image) {
+        wifiList.get(position).changeIcon(image);
+        mAdapter.notifyItemChanged(position);
+    }
+
+    public void setWallpaper(int position, Bitmap wallpaper) {
+        wifiList.get(position).setWifiWallpaper(wallpaper);
+        mAdapter.notifyItemChanged(position);
     }
 
     public void onClick(View view) {
 
     }
 
-    public class ItemModel {
-        public String itemLabel;
-    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
