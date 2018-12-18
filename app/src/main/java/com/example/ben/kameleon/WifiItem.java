@@ -5,24 +5,28 @@ import android.graphics.Bitmap;
 public class WifiItem {
     private int mIconResource;
     private String mWifiName;
-    private Bitmap mWifiWallpaper;
+    private String mWifiWallpaperPath;
 
-    public WifiItem(int imageResource, String wifiName, Bitmap wallpaper) {
+    public WifiItem(int imageResource, String wifiName, String wallpaperPath) {
         mIconResource = imageResource;
         mWifiName = wifiName;
-        mWifiWallpaper = wallpaper;
+        mWifiWallpaperPath = wallpaperPath;
     }
 
     public void changeIcon(int image) {
         mIconResource = image;
     }
 
-    public void setWifiWallpaper(Bitmap wallpaper) {
-        mWifiWallpaper = wallpaper;
+    public void setWifiWallpaperPath(String wallpaperPath) {
+        mWifiWallpaperPath = wallpaperPath;
     }
 
-    public Bitmap getWifiWallpaper() {
-        return mWifiWallpaper;
+    public String getWifiWallpaper() {
+        return mWifiWallpaperPath;
+    }
+
+    public void changeImage(int image) {
+        mIconResource = image;
     }
 
     public int getImageResource() {

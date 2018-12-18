@@ -1,24 +1,16 @@
 package com.example.ben.kameleon;
 
-import android.Manifest;
-import android.app.AlertDialog;
 import android.app.WallpaperManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.CalendarContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,23 +23,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -58,8 +38,10 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
     private WifiAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<WifiItem> wifiList;
-    private Bitmap selectedImage;
-    File file;
+    private String selectedImagePath;
+    String mFilePath;
+    private static int RESULT_LOAD_IMG = 1;
+    String imgPath, storedPath;
 
 
     @Nullable
@@ -133,7 +115,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
                 startActivityForResult(photoPickerIntent, RESULT_OK);
 
 //                try (FileOutputStream out = new FileOutputStream(file)) {
-//                    selectedImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+//                    selectedImagePath.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
 //                    // PNG is a lossless format, the compression factor (100) is ignored
 //                } catch (IOException e) {
 //                    e.printStackTrace();
@@ -142,16 +124,27 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
                 changeIcon(position, R.drawable.ic_home);
 
-                setWallpaper(position, selectedImage);
+                setWallpaperPath(position, selectedImagePath);
+
+                loadImageFromGallery();
+
+                SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+                String wallpaperPath = mPreferences.getString("wallpaper_path","asddad");
+
+                //TODO Fix this
+
+                (wifiList.get(position)).setWifiWallpaperPath(wallpaperPath);
+
+                Log.d("wifiList", wifiList.get(position).toString());
 
 //                wifiList.get(position).getWifiWallpaper();
 
                 WallpaperManager myWallpaperManager
                         = WallpaperManager.getInstance(getActivity().getApplicationContext());
 
-                if (selectedImage != null) {
+                if (wallpaperPath != null) {
                     try {
-                        myWallpaperManager.setBitmap(wifiList.get(position).getWifiWallpaper());
+                        myWallpaperManager.setBitmap(BitmapFactory.decodeFile(wallpaperPath));
                         Log.d("OnClick", "Wallpaper set");
                     }
                     catch (IOException e) {
@@ -164,33 +157,60 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
+    public void loadImageFromGallery() {
+        // Create intent to Open Image applications like Gallery, Google Photos
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // Start the Intent
+        startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+    }
+
     @Override
-    public void onActivityResult(int reqCode, int resultCode, Intent data) {
-        super.onActivityResult(reqCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            // When an Image is picked
+            if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
+                    && null != data) {
+                // Get the Image from data
+
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.MediaColumns.DATA };
+
+                // Get the cursor
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                // Move to first row
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                imgPath = cursor.getString(columnIndex);
+                Log.d("path", imgPath);
+                cursor.close();
+
+                // Creates a new shared preferences file that allows user preferences to be stored within the application
+                SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+                // Allows preferences file to be edited using 'editor'
+                final SharedPreferences.Editor editor = mPreferences.edit();
+
+                editor.putString("wallpaper_path", imgPath);
+                editor.apply();
 
 
-        if (resultCode == RESULT_OK) {
-            try {
-                final Uri imageUri = data.getData();
-                final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
-                selectedImage = BitmapFactory.decodeStream(imageStream);
+                // Bitmap myBitmap = BitmapFactory.decodeFile(imgPath);
 
-                // https://stackoverflow.com/questions/35522893/android-load-image-from-gallery-and-set-as-background
+
             }
-            catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();
+            else {
+                Toast.makeText(getActivity(), "You haven't picked Image", Toast.LENGTH_LONG).show();
             }
-
         }
-        else {
-            Toast.makeText(getActivity(), "You haven't picked Image",Toast.LENGTH_LONG).show();
+
+        catch (Exception e) {
+            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void loadImagefromGallery(View view) {
-
-    }
 
     private void createWifiList() {
         List<String> ssidList = new ArrayList<>();
@@ -205,7 +225,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
         }
 
         for (int i = 0; i < configuredList.size(); i++){
-            wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, ssidList.get(i), selectedImage));
+            wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, ssidList.get(i), selectedImagePath));
         }
     }
 
@@ -214,8 +234,8 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
         mAdapter.notifyItemChanged(position);
     }
 
-    public void setWallpaper(int position, Bitmap wallpaper) {
-        wifiList.get(position).setWifiWallpaper(wallpaper);
+    public void setWallpaperPath(int position, String wallpaperPath) {
+        wifiList.get(position).setWifiWallpaperPath(wallpaperPath);
         mAdapter.notifyItemChanged(position);
     }
 
