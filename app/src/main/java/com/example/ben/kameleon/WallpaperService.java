@@ -86,6 +86,8 @@ public class WallpaperService extends JobService {
 
             ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
 
+            //TODO Debug here
+
             if (wifiList.contains(currentSsid)) {
                 int index = wifiList.indexOf(currentSsid);
 
