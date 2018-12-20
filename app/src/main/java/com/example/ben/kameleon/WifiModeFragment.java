@@ -219,9 +219,6 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
                 // String[] wifiStringList = wifiList.toArray(new String[0]);
 
-
-                // TODO TRY THIS: https://stackoverflow.com/a/47155338/5565085
-
                 // saveWifiArrayList();
 
                 saveArrayList(wifiList, "wifi_array_list");

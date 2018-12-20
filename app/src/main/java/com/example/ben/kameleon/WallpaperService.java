@@ -37,10 +37,13 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -82,14 +85,18 @@ public class WallpaperService extends JobService {
 
             getCurrentWifi();
 
-            currentSsid.replace("\"", "");
+            currentSsid = currentSsid.replace("\"", "");
 
             ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
 
+            //String[] wifiStringList = wifiList.toArray(new String[0]);
+
             //TODO Debug here
 
-            if (wifiList.contains(currentSsid)) {
-                int index = wifiList.indexOf(currentSsid);
+            String json = mPreferences.getString("wifi_array_list", null);
+
+            if (json.contains(currentSsid)) {
+                int index = getItemPos(wifiList, currentSsid);
 
                 String wifiWallpaperPath = wifiList.get(index).getWifiWallpaper();
                 Toast.makeText(getApplicationContext(), "Current SSID is in array", Toast.LENGTH_LONG).show();
@@ -118,6 +125,19 @@ public class WallpaperService extends JobService {
         return true;
     }
 
+    private int getItemPos(ArrayList<WifiItem> mArrayList, String wifiName)
+    {
+        for(int i=0;i<mArrayList.size();i++)
+        {
+            String arrayWifiName = mArrayList.get(i).getWifiName();
+            if(arrayWifiName.equals(wifiName))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void saveArrayList(ArrayList<WifiItem> list, String key){
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
@@ -136,7 +156,7 @@ public class WallpaperService extends JobService {
     }
 
     private void getCurrentWifi() {
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo;
 
         wifiInfo = wifiManager.getConnectionInfo();
