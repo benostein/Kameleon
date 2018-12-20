@@ -6,7 +6,11 @@ import android.app.job.JobService;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -22,13 +26,17 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -46,6 +54,7 @@ public class WallpaperService extends JobService {
             R.drawable.img_wall_weather_801, R.drawable.img_wall_weather_601, R.drawable.img_wall_weather_200, R.drawable.img_wall_weather_500, R.drawable.img_wall_weather_800
 
     };
+    public String currentSsid;
 
 
 
@@ -71,7 +80,32 @@ public class WallpaperService extends JobService {
         if (!mPreferences.getBoolean("selected_wifi_button", true)) {
             Log.d(TAG, "Wi-Fi mode has started");
 
-            //getWifiNetworks();
+            getCurrentWifi();
+
+            currentSsid.replace("\"", "");
+
+            ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
+
+            if (wifiList.contains(currentSsid)) {
+                int index = wifiList.indexOf(currentSsid);
+
+                String wifiWallpaperPath = wifiList.get(index).getWifiWallpaper();
+                Toast.makeText(getApplicationContext(), "Current SSID is in array", Toast.LENGTH_LONG).show();
+
+                WallpaperManager myWallpaperManager
+                        = WallpaperManager.getInstance(this.getApplicationContext());
+
+                if (wifiWallpaperPath != null) {
+                    try {
+                        myWallpaperManager.setBitmap(BitmapFactory.decodeFile(wifiWallpaperPath));
+                        Log.d("OnClick", "Wallpaper set");
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
 
         }
         else {
@@ -80,6 +114,33 @@ public class WallpaperService extends JobService {
 
 
         return true;
+    }
+
+    public void saveArrayList(ArrayList<WifiItem> list, String key){
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public ArrayList<WifiItem> getArrayList(String key){
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = mPreferences.getString(key, null);
+        Type type = new TypeToken<ArrayList<WifiItem>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    private void getCurrentWifi() {
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo;
+
+        wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
+            currentSsid = wifiInfo.getSSID();
+        }
     }
 
     private void changeWallpaper(final JobParameters jobParameters, String conditionId) {

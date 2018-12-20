@@ -68,6 +68,6 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiViewHolder
 
     @Override
     public int getItemCount() {
-        return mWifiList.size();
+        return (mWifiList == null) ? 0 : mWifiList.size();
     }
 }

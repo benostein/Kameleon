@@ -101,9 +101,11 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        List<String> wifiArrayList = loadWifiArrayList();
+//        List<String> wifiArrayList = loadWifiArrayList();
 
-        if (wifiArrayList == null) {
+        ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
+
+        if (wifiList == null) {
             createWifiList();
         }
 
@@ -204,6 +206,8 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
                 Integer position = mPreferences.getInt("temp_wifi_position",0);
 
+                ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
+
                 changeIcon(position, R.drawable.ic_home);
 
                 setWallpaperPath(position, imgPath);
@@ -213,12 +217,14 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
                 Log.d("wifiList", wifiList.get(position).toString());
 
-                String[] wifiStringList = wifiList.toArray(new String[0]);
+                // String[] wifiStringList = wifiList.toArray(new String[0]);
 
 
                 // TODO TRY THIS: https://stackoverflow.com/a/47155338/5565085
 
-//                saveWifiArrayList();
+                // saveWifiArrayList();
+
+                saveArrayList(wifiList, "wifi_array_list");
 
 
                 // Bitmap myBitmap = BitmapFactory.decodeFile(imgPath);
@@ -252,50 +258,76 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
             wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, ssidList.get(i), selectedImagePath));
         }
 
-        saveWifiArrayList();
+        // saveWifiArrayList();
+
+        saveArrayList(wifiList, "wifi_array_list");
     }
 
-    private List<String> loadWifiArrayList() {
-        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = mPreferences.edit();
-
-        //ArrayList<WifiItem> wifiList;
-
-        List<String> wifiArrayList;
-
-        //Retrieve the Wi-Fi array list
-        Gson gson = new Gson();
-        String jsonText = mPreferences.getString("wifi_array_list", null);
-//        String[] wifiArrayList = gson.fromJson(jsonText, new TypeToken<String[]>() {
-//        }.getType());
-
-        Type type = new TypeToken<List<String>>() {
-        }.getType();
-        wifiArrayList = gson.fromJson(jsonText, type);
-
-        return wifiArrayList;
-    }
-
-    private void saveWifiArrayList() {
-        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = mPreferences.edit();
-
-
-//        //Set the values
+//    private List<String> loadWifiArrayList() {
+//        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+//        final SharedPreferences.Editor editor = mPreferences.edit();
+//
+//        //ArrayList<WifiItem> wifiList;
+//
+//        List<String> wifiArrayList;
+//
+//        //Retrieve the Wi-Fi array list
 //        Gson gson = new Gson();
-//        String jsonText = gson.toJson(wifiList);
-//        editor.putString("wifi_array_list", jsonText);
-//        editor.apply();
+//        String jsonText = mPreferences.getString("wifi_array_list", null);
+////        String[] wifiArrayList = gson.fromJson(jsonText, new TypeToken<String[]>() {
+////        }.getType());
+//
+//        Type type = new TypeToken<List<String>>() {
+//        }.getType();
+//        wifiArrayList = gson.fromJson(jsonText, type);
+//
+//        return wifiArrayList;
+//    }
+//
+//    private void saveWifiArrayList() {
+//        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+//        final SharedPreferences.Editor editor = mPreferences.edit();
+//
+//
+////        //Set the values
+////        Gson gson = new Gson();
+////        String jsonText = gson.toJson(wifiList);
+////        editor.putString("wifi_array_list", jsonText);
+////        editor.apply();
+//
+//    }
 
+    public void saveArrayList(ArrayList<WifiItem> list, String key){
+        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public ArrayList<WifiItem> getArrayList(String key){
+        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = mPreferences.getString(key, null);
+        Type type = new TypeToken<ArrayList<WifiItem>>() {}.getType();
+        return gson.fromJson(json, type);
     }
 
 
     public void changeIcon(int position, int image) {
-        wifiList.get(position).changeIcon(image);
-        mAdapter.notifyItemChanged(position);
+        wifiList = getArrayList("wifi_array_list");
+        if (wifiList != null){
+            wifiList.get(position).changeIcon(image);
+            mAdapter.notifyItemChanged(position);
+        }
+        else {
+            Log.d("WifiModeFragment", "wifiList is empty");
+        }
     }
 
     public void setWallpaperPath(int position, String wallpaperPath) {
+        ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
         wifiList.get(position).setWifiWallpaperPath(wallpaperPath);
         mAdapter.notifyItemChanged(position);
     }

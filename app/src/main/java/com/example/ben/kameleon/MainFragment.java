@@ -37,8 +37,6 @@ import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
-    boolean activated;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
