@@ -107,6 +107,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
         if (wifiList == null) {
             createWifiList();
+            wifiList = getArrayList("wifi_array_list");
         }
 
         //buildRecyclerView();

@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FusedLocationProviderClient mFusedLocationClient;
     private WallpaperService mWallpaperService;
     private static final String TAG = "MainActivity";
+    private Integer refreshTime = 0;
 
 
     // Button weatherButton;
@@ -93,12 +94,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     public void scheduleJob(View v) {
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+
         // Links to the WallpaperService class
         ComponentName componentName = new ComponentName(this, WallpaperService.class);
+
+        // Retrieves the user selected refresh time
+
+
+        switch (mPreferences.getInt("selected_refresh_time",1)) {
+            case 0:
+                refreshTime = 30;
+            case 1:
+                refreshTime = 60;
+            case 2:
+                refreshTime = 120;
+            case 3:
+                refreshTime = 240;
+        }
+
         // Defines job information
         JobInfo info = new JobInfo.Builder(100, componentName)
                 // Executes every 45 minutes (approx)
-                .setPeriodic(45 * 60 * 1000)
+                .setPeriodic(refreshTime * 60 * 1000)
                 // Device must be connected to network for job to run
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 // Ensures the job runs after a reboot.

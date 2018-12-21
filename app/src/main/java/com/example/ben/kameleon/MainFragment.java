@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -84,10 +86,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // Restores user selected value in spinner from value in shared preferences
         activateButton.setEnabled(mPreferences.getBoolean("selected_activate_button",true));
         deactivateButton.setEnabled(mPreferences.getBoolean("selected_deactivate_button",false));
-        // Enables weather mode by default
+        // Disables all modes by default
         weatherButton.setEnabled(mPreferences.getBoolean("selected_weather_button",false));
-        wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",true));
-        tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",true));
+        wifiButton.setEnabled(mPreferences.getBoolean("selected_wifi_button",false));
+        tempButton.setEnabled(mPreferences.getBoolean("selected_temp_button",false));
+
+        weatherCard.setEnabled(mPreferences.getBoolean("selected_weather_card",false));
+        wifiCard.setEnabled(mPreferences.getBoolean("selected_wifi_card",false));
+        tempCard.setEnabled(mPreferences.getBoolean("selected_temp_card",false));
+
 
 
         return v;
@@ -128,12 +135,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        // Locates and assigns variable to each button
+        // Locates and assigns variable to each button and card
         Button activateButton = getView().findViewById(R.id.activate_button);
         Button deactivateButton = getView().findViewById(R.id.deactivate_button);
         Button weatherButton = getView().findViewById(R.id.weather_mode_button);
         Button wifiButton = getView().findViewById(R.id.wifi_mode_button);
         Button tempButton = getView().findViewById(R.id.temp_mode_button);
+
+        CardView weatherCard = getView().findViewById(R.id.weather_mode_card);
+        CardView wifiCard = getView().findViewById(R.id.wifi_mode_card);
+        CardView tempCard = getView().findViewById(R.id.temp_mode_card);
 
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
@@ -145,13 +156,23 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
 
+                weatherButton.setEnabled(false);
+                wifiButton.setEnabled(true);
+                tempButton.setEnabled(true);
+
+                weatherCard.setEnabled(true);
+                wifiCard.setEnabled(true);
+                tempCard.setEnabled(true);
+
+
+
 
                 requestRequiredPermissions();
 
 
                 ((MainActivity) getActivity()).scheduleJob(view);
 
-                Toast.makeText(getActivity(), "Activated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Activated!", Toast.LENGTH_SHORT).show();
 
 
 
@@ -162,32 +183,31 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 activateButton.setEnabled(true);
                 deactivateButton.setEnabled(false);
 
+                weatherButton.setEnabled(false);
+                wifiButton.setEnabled(false);
+                tempButton.setEnabled(false);
+
+                weatherCard.setEnabled(false);
+                wifiCard.setEnabled(false);
+                tempCard.setEnabled(false);
+
                 ((MainActivity) getActivity()).cancelJob(view);
 
                 break;
 
             case R.id.weather_mode_button:
-                // Displays toast message
-                Toast.makeText(getActivity(), "Weather Mode", Toast.LENGTH_SHORT).show();
-
                 // Disables button when pressed and enables other buttons
                 weatherButton.setEnabled(false);
                 wifiButton.setEnabled(true);
                 tempButton.setEnabled(true);
                 break;
             case R.id.wifi_mode_button:
-                // Displays toast message
-                Toast.makeText(getActivity(), "Wi-Fi Mode", Toast.LENGTH_SHORT).show();
-
                 // Disables button when pressed and enables other buttons
                 weatherButton.setEnabled(true);
                 wifiButton.setEnabled(false);
                 tempButton.setEnabled(true);
                 break;
             case R.id.temp_mode_button:
-                // Displays toast message
-                Toast.makeText(getActivity(), "Temperature Mode", Toast.LENGTH_SHORT).show();
-
                 // Disables button when pressed and enables other buttons
                 weatherButton.setEnabled(true);
                 wifiButton.setEnabled(true);
@@ -211,8 +231,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 break;
         }
 
+        //TODO:  change icon?, user specified refresh time, embed info in wallpaper
+
             // Saves the state of the mode buttons
             saveButtons(activateButton, deactivateButton, weatherButton, wifiButton, tempButton);
+            saveCards(weatherCard, wifiCard, tempCard);
         }
 
     private void requestRequiredPermissions() {
@@ -243,6 +266,19 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         editor.putBoolean("selected_weather_button", weatherButton.isEnabled());
         editor.putBoolean("selected_wifi_button", wifiButton.isEnabled());
         editor.putBoolean("selected_temp_button", tempButton.isEnabled());
+        editor.apply();
+    }
+
+    private void saveCards(CardView weatherCard, CardView wifiCard, CardView tempCard) {
+        // Accesses the shared preferences file that allows user preferences to be stored within the application
+        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        // Allows preferences file to be edited using 'editor'
+        final SharedPreferences.Editor editor = mPreferences.edit();
+
+        // Stores the state of the home buttons in shared preferences, so choice is stored when app is closed
+        editor.putBoolean("selected_weather_card", weatherCard.isEnabled());
+        editor.putBoolean("selected_wifi_card", wifiCard.isEnabled());
+        editor.putBoolean("selected_temp_card", tempCard.isEnabled());
         editor.apply();
     }
 

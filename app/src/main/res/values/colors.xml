@@ -7,4 +7,5 @@
     <color name="colorBackground">#EDEDED</color>
     <color name="colorDarkText">#303030</color>
     <color name="colorLightText">#8b8b8b</color>
+    <color name="colorWidgetShadow">#5c8c8c8c</color>
 </resources>

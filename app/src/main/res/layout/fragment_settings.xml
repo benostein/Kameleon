@@ -87,7 +87,7 @@
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
-                    android:id="@+id/gps_refresh_card"
+                    android:id="@+id/refresh_time_card"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="14dp"
@@ -101,7 +101,7 @@
                         android:padding="10dp">
 
                         <ImageView
-                            android:id="@+id/gps_refresh_icon"
+                            android:id="@+id/refresh_time_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
@@ -110,45 +110,33 @@
                             android:src="@drawable/icon_refresh" />
 
                         <TextView
-                            android:id="@+id/gps_refresh_title"
+                            android:id="@+id/refresh_time_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/gps_refresh_icon"
+                            android:layout_toEndOf="@+id/refresh_time_icon"
                             android:paddingBottom="5dp"
-                            android:text="@string/gps_refresh"
+                            android:text="@string/refresh_time"
                             android:textSize="20sp"
                             android:textColor="@color/colorDarkText" />
 
                         <TextView
-                            android:id="@+id/gps_refresh_desc"
+                            android:id="@+id/refresh_time_desc"
                             android:layout_width="220dp"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/gps_refresh_title"
-                            android:layout_toEndOf="@+id/gps_refresh_icon"
-                            android:layout_toStartOf="@id/gps_refresh_button"
-                            android:text="@string/gps_refresh_desc"
+                            android:layout_below="@+id/refresh_time_title"
+                            android:layout_toEndOf="@+id/refresh_time_icon"
+                            android:layout_toStartOf="@id/refresh_time_spinner"
+                            android:text="@string/refresh_time_desc"
                             android:textColor="@color/colorLightText"
                             android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/gps_refresh_coords"
-                            android:layout_width="220dp"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/gps_refresh_desc"
-                            android:layout_toEndOf="@+id/gps_refresh_icon"
-                            android:layout_toStartOf="@id/gps_refresh_button"
-                            android:text=""
-                            android:textColor="#8b8b8b"
-                            android:textSize="14sp" />
-
-                        <Button
-                            android:id="@+id/gps_refresh_button"
+                        <Spinner
+                            android:id="@+id/refresh_time_spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:text="@string/gps_refresh_button"/>
+                            android:layout_centerVertical="true" />
 
                     </RelativeLayout>
 

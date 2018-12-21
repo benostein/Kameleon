@@ -68,6 +68,7 @@ public class SettingsFragment extends Fragment {
         settingsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         settingsSpinner.setAdapter(settingsAdapter);
 
+
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         // Allows preferences file to be edited using 'editor'
@@ -94,62 +95,49 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        // Finds the coordinates text in the XML and gives it a variable to access
-        final TextView gpsCoordinatesText = v.findViewById(R.id.gps_refresh_coords);
 
-        // Restores user's last location in settings
-        gpsCoordinatesText.setText("Latitude: " + (mPreferences.getString("latitude","0")) + "\n" + "Longitude: " + (mPreferences.getString("longitude","0")));
 
-        // Initialises location manager and listener so device location can be accessed
-        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
 
-            // When location changes, do this:
+
+        // Finds the settings spinner in the XML and gives it a variable to access
+        final Spinner refreshTimeSpinner = v.findViewById(R.id.refresh_time_spinner);
+
+        // Defines new array list
+        ArrayList<String> refreshTimeArray = new ArrayList<>();
+
+        // Adds each item to the settings array
+        refreshTimeArray.add("30 Min");
+        refreshTimeArray.add("1 Hour");
+        refreshTimeArray.add("2 Hours");
+        refreshTimeArray.add("4 Hours");
+
+        // Creates an adapter that allows an array to be used as the contents of the spinner
+        ArrayAdapter<String> refreshTimeAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, refreshTimeArray);
+        // Uses the adapter to set the values of the array to the contents and style of the spinner
+        refreshTimeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        refreshTimeSpinner.setAdapter(refreshTimeAdapter);
+
+        // Restores user selected value in spinner from value in shared preferences
+        refreshTimeSpinner.setSelection(mPreferences.getInt("selected_refresh_time",1));
+
+        // Method for listening which item has been selected in the spinner
+        refreshTimeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
-            public void onLocationChanged(Location location) {
-
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-                gpsCoordinatesText.setText("Latitude: " + latitude + "\n" + "Longitude: " + longitude);
-
-                // Stores latitude and longitude values in shared preferences as strings as Android does not support storing doubles and floats would lose accuracy
-                editor.putString("latitude", String.valueOf(latitude));
-                editor.putString("longitude", String.valueOf(longitude));
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
+            {
+                // When an item in the list is selected, store the position value in the shared preferences, so selection is stored for next time.
+                int refreshTimeSpinnerValue = refreshTimeSpinner.getSelectedItemPosition();
+                editor.putInt("selected_refresh_time", refreshTimeSpinnerValue);
                 editor.apply();
+
             }
 
-            // If location status has changed, do this:
             @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // code goes here
             }
-
-            // If location services have been enabled, do this:
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            // If location services have been disabled, do this:
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        };
-
-//        // Checks whether permissions for location and internet have been enabled or not
-//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                requestPermissions(new String[]{
-//                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
-//                }, 10 );
-//            }
-//        }
-//        // If permissions have been granted, configure the gps refresh button
-//        else {
-//            configureGpsButton();
-//        }
+        });
 
         return v;
     }
@@ -167,7 +155,7 @@ public class SettingsFragment extends Fragment {
 //                        PackageManager.PERMISSION_GRANTED) {
 //
 //            // Finds the gps refresh button in the XML and gives it a variable to access
-//            Button gpsRefreshButton = getView().findViewById(R.id.gps_refresh_button);
+//            Button gpsRefreshButton = getView().findViewById(R.id.refresh_time_button);
 //
 //            // Listens for when button is pressed
 //            gpsRefreshButton.setOnClickListener(new View.OnClickListener() {

@@ -13,7 +13,7 @@
     <string name="weather_widget_desc">Select a piece of weather data to display within the background.</string>
     <string name="cartoon_pack">Cartoon Pack</string>
     <string name="nature_pack">Nature Pack</string>
-    <string name="gps_refresh">GPS Refresh</string>
-    <string name="gps_refresh_desc">Gets the most recent GPS coordinates. Current coordinates:</string>
-    <string name="gps_refresh_button">Refresh</string>
+    <string name="refresh_time">Refresh Time</string>
+    <string name="refresh_time_desc">Specify how often the app refreshes and changes the wallpaper.</string>
+    <string name="refresh_time_button">Refresh</string>
 </resources>

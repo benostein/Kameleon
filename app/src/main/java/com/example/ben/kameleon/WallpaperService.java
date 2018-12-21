@@ -6,7 +6,14 @@ import android.app.job.JobService;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
@@ -14,6 +21,8 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.text.TextPaint;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -37,13 +46,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-import java.util.stream.Stream;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -78,7 +83,7 @@ public class WallpaperService extends JobService {
             getWeatherData();
             String conditionId = (mPreferences.getString("condition_id","801"));
 
-            changeWallpaper(jobParameters, conditionId);
+            changeWeatherWallpaper(jobParameters, conditionId);
         }
         if (!mPreferences.getBoolean("selected_wifi_button", true)) {
             Log.d(TAG, "Wi-Fi mode has started");
@@ -99,20 +104,8 @@ public class WallpaperService extends JobService {
                 int index = getItemPos(wifiList, currentSsid);
 
                 String wifiWallpaperPath = wifiList.get(index).getWifiWallpaper();
-                Toast.makeText(getApplicationContext(), "Current SSID is in array", Toast.LENGTH_LONG).show();
 
-                WallpaperManager myWallpaperManager
-                        = WallpaperManager.getInstance(this.getApplicationContext());
-
-                if (wifiWallpaperPath != null) {
-                    try {
-                        myWallpaperManager.setBitmap(BitmapFactory.decodeFile(wifiWallpaperPath));
-                        Log.d("OnClick", "Wallpaper set");
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                changeWifiWallpaper(wifiWallpaperPath);
 
             }
 
@@ -120,9 +113,112 @@ public class WallpaperService extends JobService {
         else {
             Log.d(TAG, "No mode selected");
         }
+        if (mPreferences.getInt("selected_widget", 0) != 0) {
+            Log.d(TAG, "Widget selected");
 
+            String currentTemperatureString = mPreferences.getString("current_temp_string", "10°C");
+            Log.d(TAG, currentTemperatureString);
+
+            switch (mPreferences.getInt("selected_widget", 0)) {
+                case 1:
+                    int canvasWidth = 200;
+                    int canvasHeight = 130;
+                    Bitmap myForegroundBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(myForegroundBitmap);
+                    TextPaint textPaint = new TextPaint();
+                    textPaint.setTextAlign(Paint.Align.RIGHT);
+                    textPaint.setAntiAlias(true);
+                    textPaint.setTextSize(30 * getResources().getDisplayMetrics().density);
+                    textPaint.setColor(Color.WHITE);
+                    textPaint.setShadowLayer(2, 0, 4, R.color.colorWidgetShadow);
+                    //textPaint.setTypeface(Typeface.DEFAULT);
+
+                    canvas.drawText(currentTemperatureString, canvasWidth-6, canvasHeight-6, textPaint) ;
+                    canvas.save(Canvas.ALL_SAVE_FLAG);
+                    canvas.restore();
+
+                    final WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+                    final Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+
+                    Bitmap myBackgroundBitmap = drawableToBitmap(wallpaperDrawable);
+
+                    Bitmap WallpaperBitmap = combineImages(myBackgroundBitmap, myForegroundBitmap);
+
+                    changeWallpaper(WallpaperBitmap);
+
+            }
+
+        }
 
         return true;
+    }
+
+    private void changeWallpaper(Bitmap wallpaper) {
+        WallpaperManager myWallpaperManager
+                = WallpaperManager.getInstance(this.getApplicationContext());
+
+        try {
+            myWallpaperManager.setBitmap(wallpaper);
+            Log.d("OnClick", "Wallpaper set");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    public Bitmap combineImages(Bitmap background, Bitmap foreground) {
+
+        Bitmap cs;
+
+        DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+        cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas comboImage = new Canvas(cs);
+        background = Bitmap.createScaledBitmap(background, width, height, true);
+        comboImage.drawBitmap(background, 0, 0, null);
+        comboImage.drawBitmap(foreground, (width-240), 50, null);
+
+        return cs;
+    }
+
+    private void changeWifiWallpaper(String wifiWallpaperPath) {
+        WallpaperManager myWallpaperManager
+                = WallpaperManager.getInstance(this.getApplicationContext());
+
+        if (wifiWallpaperPath != null) {
+            try {
+                myWallpaperManager.setBitmap(BitmapFactory.decodeFile(wifiWallpaperPath));
+                Log.d("OnClick", "Wallpaper set");
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private int getItemPos(ArrayList<WifiItem> mArrayList, String wifiName)
@@ -165,7 +261,7 @@ public class WallpaperService extends JobService {
         }
     }
 
-    private void changeWallpaper(final JobParameters jobParameters, String conditionId) {
+    private void changeWeatherWallpaper(final JobParameters jobParameters, String conditionId) {
 
         // HashMap to map all weather condition ids to specific images
         HashMap<String, String> weatherConditionIds = new HashMap<>();
@@ -258,8 +354,6 @@ public class WallpaperService extends JobService {
         }
     }
 
-// LatLng currentLocation = getLastLocation();
-        // getWeatherData(currentLocation);
 
 
 
@@ -309,7 +403,7 @@ public class WallpaperService extends JobService {
         final SharedPreferences.Editor editor = mPreferences.edit();
 
         // Shows latitude for testing purposes
-        Toast.makeText(this, "Latitude: " + String.valueOf(latitude) + "\n" + "Longitude: " + String.valueOf(longitude), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "Latitude: " + String.valueOf(latitude) + "\n" + "Longitude: " + String.valueOf(longitude), Toast.LENGTH_SHORT).show();
 
         // Stores latitude and longitude values in shared preferences as strings as Android does not support storing doubles and floats would lose accuracy
         editor.putString("latitude", String.valueOf(latitude));
@@ -319,7 +413,7 @@ public class WallpaperService extends JobService {
 
     public void getWeatherData() {
 
-        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
 
         // Retrieves location coordinates from SharedPreferences and converts them into a double
@@ -330,7 +424,7 @@ public class WallpaperService extends JobService {
         String apiKey = BuildConfig.openWeatherMapApiKey;
 
         // Forms a url to the OpenWeatherMap API and concatenates the retrieved latitude and longitude coordinates as well as the API key to retrieve relevant weather data
-        String weatherDataUrl ="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=imperial";
+        String weatherDataUrl ="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
 
         // Creates a JsonObjectResponse that performs the onResponse() method once it has received a JsonObject from the url specified
         JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, weatherDataUrl, null, new Response.Listener<JSONObject>() {
@@ -349,16 +443,31 @@ public class WallpaperService extends JobService {
                     String weatherCode = object.getString("id");
 
                     editor.putString("condition_id", String.valueOf(weatherCode));
-                    editor.apply();
 
                     Calendar calendar = Calendar.getInstance();
                     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
                     String formatted_date = sdf.format(calendar.getTime());
 
-                    double temp_int = Double.parseDouble(temp);
-                    double centi = (temp_int - 32) /1.8000;
-                    centi = Math.round(centi);
-                    int i = (int)centi;
+                    double temperature = Double.parseDouble(temp);
+                    int temperatureInt = 0;
+                    String temperatureString = "";
+
+                    if (mPreferences.getInt("selected_temp", 0) == 1) {
+                        temperature = ((9/5) * temperature + 32);
+                        temperatureInt = (int)(Math.round(temperature));
+                        temperatureString = String.valueOf(temperatureInt) + (char) 0x00B0 + "F";
+                    }
+                    else {
+                        temperatureInt = (int)(Math.round(temperature));
+                        temperatureString = String.valueOf(temperatureInt) + (char) 0x00B0 + "C";
+                    }
+
+
+                    editor.putInt("current_temp", temperatureInt);
+                    editor.putString("current_temp_string", temperatureString);
+
+                    editor.apply();
+
 
                     // Toast for testing
                     // Toast.makeText(getApplicationContext(), String.valueOf(weatherCode), Toast.LENGTH_LONG).show();
