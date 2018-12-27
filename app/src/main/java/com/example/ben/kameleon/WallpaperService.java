@@ -63,6 +63,7 @@ public class WallpaperService extends JobService {
 
     };
     public String currentSsid;
+    public String widgetString;
 
 
 
@@ -100,14 +101,21 @@ public class WallpaperService extends JobService {
 
             String json = mPreferences.getString("wifi_array_list", null);
 
-            if (json.contains(currentSsid)) {
-                int index = getItemPos(wifiList, currentSsid);
+            try {
+                if (json.contains(currentSsid) && currentSsid != null) {
+                    int index = getItemPos(wifiList, currentSsid);
 
-                String wifiWallpaperPath = wifiList.get(index).getWifiWallpaper();
+                    String wifiWallpaperPath = wifiList.get(index).getWifiWallpaper();
 
-                changeWifiWallpaper(wifiWallpaperPath);
-
+                    changeWifiWallpaper(wifiWallpaperPath);
+                }
             }
+            catch (NullPointerException e) {
+                e.printStackTrace();
+                Log.d(TAG, "Wallpaper image not configured.");
+            }
+
+
 
         }
         else {
@@ -116,41 +124,55 @@ public class WallpaperService extends JobService {
         if (mPreferences.getInt("selected_widget", 0) != 0) {
             Log.d(TAG, "Widget selected");
 
-            String currentTemperatureString = mPreferences.getString("current_temp_string", "10°C");
-            Log.d(TAG, currentTemperatureString);
-
-            switch (mPreferences.getInt("selected_widget", 0)) {
-                case 1:
-                    int canvasWidth = 200;
-                    int canvasHeight = 130;
-                    Bitmap myForegroundBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(myForegroundBitmap);
-                    TextPaint textPaint = new TextPaint();
-                    textPaint.setTextAlign(Paint.Align.RIGHT);
-                    textPaint.setAntiAlias(true);
-                    textPaint.setTextSize(30 * getResources().getDisplayMetrics().density);
-                    textPaint.setColor(Color.WHITE);
-                    textPaint.setShadowLayer(2, 0, 4, R.color.colorWidgetShadow);
-                    //textPaint.setTypeface(Typeface.DEFAULT);
-
-                    canvas.drawText(currentTemperatureString, canvasWidth-6, canvasHeight-6, textPaint) ;
-                    canvas.save(Canvas.ALL_SAVE_FLAG);
-                    canvas.restore();
-
-                    final WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-                    final Drawable wallpaperDrawable = wallpaperManager.getDrawable();
-
-                    Bitmap myBackgroundBitmap = drawableToBitmap(wallpaperDrawable);
-
-                    Bitmap WallpaperBitmap = combineImages(myBackgroundBitmap, myForegroundBitmap);
-
-                    changeWallpaper(WallpaperBitmap);
-
+            if (mPreferences.getInt("selected_widget", 0) == 1) {
+                Log.d(TAG, "Temperature widget selected");
+                widgetString = mPreferences.getString("current_temp_string", "10°C");
             }
+            else if (mPreferences.getInt("selected_widget", 0) == 2) {
+                Log.d(TAG, "Humidity widget selected");
+                widgetString = mPreferences.getString("current_humidity_string", "1%");
+            }
+            else if (mPreferences.getInt("selected_widget", 0) == 3) {
+                Log.d(TAG, "Wind speed widget selected");
+                widgetString = mPreferences.getString("current_wind_speed_string", "10m/s");
+            }
+
+            Log.d(TAG, widgetString);
+
+
+            int canvasWidth = 300;
+            int canvasHeight = 130;
+            Bitmap myForegroundBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(myForegroundBitmap);
+            TextPaint textPaint = new TextPaint();
+            textPaint.setTextAlign(Paint.Align.RIGHT);
+            textPaint.setAntiAlias(true);
+            textPaint.setTextSize(30 * getResources().getDisplayMetrics().density);
+            textPaint.setColor(Color.WHITE);
+            textPaint.setShadowLayer(2, 0, 4, R.color.colorWidgetShadow);
+            //textPaint.setTypeface(Typeface.DEFAULT);
+
+            canvas.drawText(widgetString, canvasWidth-6, canvasHeight-6, textPaint) ;
+            canvas.save(Canvas.ALL_SAVE_FLAG);
+            canvas.restore();
+
+            Drawable wallpaperDrawable = getCurrentWallpaper();
+
+            Bitmap myBackgroundBitmap = drawableToBitmap(wallpaperDrawable);
+
+            Bitmap WallpaperBitmap = combineImages(myBackgroundBitmap, myForegroundBitmap);
+
+            changeWallpaper(WallpaperBitmap);
 
         }
 
         return true;
+    }
+
+    private Drawable getCurrentWallpaper() {
+        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+        final Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+        return wallpaperDrawable;
     }
 
     private void changeWallpaper(Bitmap wallpaper) {
@@ -201,7 +223,7 @@ public class WallpaperService extends JobService {
         Canvas comboImage = new Canvas(cs);
         background = Bitmap.createScaledBitmap(background, width, height, true);
         comboImage.drawBitmap(background, 0, 0, null);
-        comboImage.drawBitmap(foreground, (width-240), 50, null);
+        comboImage.drawBitmap(foreground, (width-340), 50, null);
 
         return cs;
     }
@@ -433,13 +455,16 @@ public class WallpaperService extends JobService {
             public void onResponse(JSONObject response) {
                 try {
 
-                    // Retrieves specific elements from the JsonObject and assings them to their corresponding variable names
+                    // Retrieves specific elements from the JsonObject and assigns them to their corresponding variable names
                     JSONObject main_object = response.getJSONObject("main");
+                    JSONObject wind_object = response.getJSONObject("wind");
                     JSONArray array = response.getJSONArray("weather");
                     JSONObject object = array.getJSONObject(0);
                     String temp = String.valueOf(main_object.getDouble("temp"));
-                    String description = object.getString("description");
-                    String city = response.getString("name");
+                    String humidity = String.valueOf(main_object.getInt("humidity"));
+                    String windSpeed = String.valueOf(wind_object.getDouble("speed"));
+//                    String description = object.getString("description");
+//                    String city = response.getString("name");
                     String weatherCode = object.getString("id");
 
                     editor.putString("condition_id", String.valueOf(weatherCode));
@@ -449,8 +474,8 @@ public class WallpaperService extends JobService {
                     String formatted_date = sdf.format(calendar.getTime());
 
                     double temperature = Double.parseDouble(temp);
-                    int temperatureInt = 0;
-                    String temperatureString = "";
+                    int temperatureInt;
+                    String temperatureString;
 
                     if (mPreferences.getInt("selected_temp", 0) == 1) {
                         temperature = ((9/5) * temperature + 32);
@@ -465,6 +490,9 @@ public class WallpaperService extends JobService {
 
                     editor.putInt("current_temp", temperatureInt);
                     editor.putString("current_temp_string", temperatureString);
+                    editor.putString("current_humidity_string", (humidity + "%"));
+                    editor.putString("current_wind_speed_string", (windSpeed + "m/s"));
+
 
                     editor.apply();
 

@@ -33,7 +33,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -102,36 +104,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
 
 
-
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if(requestCode == 100) {
-//            if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-//                activated = true;
-//            }
-//            else {
-//                runtimePermissions();
-//            }
-//        }
-//    }
-//
-//    private boolean runtimePermissions() {
-//        if(Build.VERSION.SDK_INT >= 23  && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
-//                PackageManager.PERMISSION_GRANTED &&
-//                ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-//                        PackageManager.PERMISSION_GRANTED){
-//            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
-//            return true;
-//        }
-//        return false;
-//    }
-
-
-
-
-
-
     @Override
     public void onClick(View view) {
 
@@ -148,7 +120,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // Creates a new shared preferences file that allows user preferences to be stored within the application
         SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-
+        // Allows preferences file to be edited using 'editor'
+        final SharedPreferences.Editor editor = mPreferences.edit();
 
         switch (view.getId()) {
             case R.id.activate_button:
@@ -156,30 +129,29 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
 
-                weatherButton.setEnabled(false);
-                wifiButton.setEnabled(true);
-                tempButton.setEnabled(true);
+                weatherButton.setEnabled(mPreferences.getBoolean("reactivated_weather_button", false));
+                wifiButton.setEnabled(mPreferences.getBoolean("reactivated_wifi_button", true));
+                tempButton.setEnabled(mPreferences.getBoolean("reactivated_temp_button", true));
 
                 weatherCard.setEnabled(true);
                 wifiCard.setEnabled(true);
                 tempCard.setEnabled(true);
 
 
-
-
                 requestRequiredPermissions();
-
 
                 ((MainActivity) getActivity()).scheduleJob(view);
 
                 Toast.makeText(getActivity(), "Activated!", Toast.LENGTH_SHORT).show();
 
-
-
                 break;
 
             case R.id.deactivate_button:
-                Toast.makeText(getActivity(), "Deactivated", Toast.LENGTH_SHORT).show();
+
+                editor.putBoolean("reactivated_weather_button", weatherButton.isEnabled());
+                editor.putBoolean("reactivated_wifi_button", weatherButton.isEnabled());
+                editor.putBoolean("reactivated_temp_button", weatherButton.isEnabled());
+
                 activateButton.setEnabled(true);
                 deactivateButton.setEnabled(false);
 
@@ -193,6 +165,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
                 ((MainActivity) getActivity()).cancelJob(view);
 
+                Toast.makeText(getActivity(), "Deactivated", Toast.LENGTH_SHORT).show();
+
                 break;
 
             case R.id.weather_mode_button:
@@ -200,18 +174,30 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 weatherButton.setEnabled(false);
                 wifiButton.setEnabled(true);
                 tempButton.setEnabled(true);
+
+                // Reschedules job with new mode selected
+                ((MainActivity) getActivity()).cancelJob(view);
+                ((MainActivity) getActivity()).scheduleJob(view);
                 break;
             case R.id.wifi_mode_button:
                 // Disables button when pressed and enables other buttons
                 weatherButton.setEnabled(true);
                 wifiButton.setEnabled(false);
                 tempButton.setEnabled(true);
+
+                // Reschedules job with new mode selected
+                ((MainActivity) getActivity()).cancelJob(view);
+                ((MainActivity) getActivity()).scheduleJob(view);
                 break;
             case R.id.temp_mode_button:
                 // Disables button when pressed and enables other buttons
                 weatherButton.setEnabled(true);
                 wifiButton.setEnabled(true);
                 tempButton.setEnabled(false);
+
+                // Reschedules job with new mode selected
+                ((MainActivity) getActivity()).cancelJob(view);
+                ((MainActivity) getActivity()).scheduleJob(view);
                 break;
 
 

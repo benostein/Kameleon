@@ -17,6 +17,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -89,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // If the app has been activated, schedule the wallpaper service job
             scheduleJob(navigationView);
         }
+
+//        StartUpBootReceiver responseReceiver = new StartUpBootReceiver(this); //passing context
+//        LocalBroadcastManager.getInstance(this).registerReceiver(responseReceiver,null);
 
     }
 
@@ -203,5 +207,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
     }
 
+
+//    public void brCallback(String param){
+//        Log.d("BroadcastReceiver",param);
+//
+//        SharedPreferences mPreferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
+//
+//        if (mPreferences.getBoolean("selected_activate_button",false)) {
+//            // If the app has been activated, schedule the wallpaper service job
+//            scheduleJob(getViewModelStore());
+//        }
+//    }
 
 }
