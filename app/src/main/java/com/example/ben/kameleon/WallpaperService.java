@@ -360,18 +360,19 @@ public class WallpaperService extends JobService {
         weatherConditionIds.put("804", "803");
 
 
+        // Defines WallpaperManager
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
 
-        //TODO Change image style depending on image pack selected
-
+        // Locates the corresponding wallpaper to the current condition using the conditionId passed into the method
         int weatherConditionWallpaper = getResources().getIdentifier("img_wall_weather_" + weatherConditionIds.get(conditionId),"drawable", getPackageName());
 
         try {
+            // Sets the wallpaper to the located wallpaper as previously defined
             myWallpaperManager.setResource(+weatherConditionWallpaper);
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
+            // Prints error to log
             e.printStackTrace();
         }
     }
