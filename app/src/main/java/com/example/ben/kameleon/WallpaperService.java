@@ -440,8 +440,10 @@ public class WallpaperService extends JobService {
         final SharedPreferences.Editor editor = mPreferences.edit();
 
         // Retrieves location coordinates from SharedPreferences and converts them into a double
-        double latitude = Double.valueOf(mPreferences.getString("latitude","0"));
-        double longitude = Double.valueOf(mPreferences.getString("longitude","0"));
+        // double latitude = Double.valueOf(mPreferences.getString("latitude","0"));
+        // double longitude = Double.valueOf(mPreferences.getString("longitude","0"));
+        double latitude = 91.0000;
+        double longitude = -181.0000;
 
         // Pulls in the API key from the BuildConfig file
         String apiKey = BuildConfig.openWeatherMapApiKey;
