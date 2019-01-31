@@ -108,20 +108,20 @@ public class WallpaperService extends JobService {
             String json = mPreferences.getString("wifi_array_list", null);
 
             try {
-				// Checks if the current SSID is within the list of SSIDs previously connected to (and configured) within the Wi-Fi mode
+		// Checks if the current SSID is within the list of SSIDs previously connected to (and configured) within the Wi-Fi mode
                 if (json.contains(currentSsid) && currentSsid != null) {
-					// Retrieves index of this SSID
+			// Retrieves index of this SSID
                     int index = getItemPos(wifiList, currentSsid);
 
-					// Locates the image assigned to this SSID
+			// Locates the image assigned to this SSID
                     String wifiWallpaperPath = wifiList.get(index).getWifiWallpaper();
 
-					// Changes the wallpaper to the image specified in the path
+			// Changes the wallpaper to the image specified in the path
                     changeWifiWallpaper(wifiWallpaperPath);
                 }
             }
             catch (NullPointerException e) {
-				// If no wallpaper is configured or current SSID is not within the array, print an error in the log and do not change the wallpaper
+		// If no wallpaper is configured or current SSID is not within the array, print an error in the log and do not change the wallpaper
                 e.printStackTrace();
                 Log.d(TAG, "Wallpaper image not configured.");
             }
@@ -130,38 +130,38 @@ public class WallpaperService extends JobService {
 
         }
         else {
-			// If no mode has been selected, do nothing
+	// If no mode has been selected, do nothing
             Log.d(TAG, "No mode selected");
         }
 		
-		// Checks if a widget has been selected
+	// Checks if a widget has been selected
         if (mPreferences.getInt("selected_widget", 0) != 0) {
             Log.d(TAG, "Widget selected");
 
-			// If the temperature widget has been selected, set the widget string to the current temp from shared preferences
+		// If the temperature widget has been selected, set the widget string to the current temp from shared preferences
             if (mPreferences.getInt("selected_widget", 0) == 1) {
                 Log.d(TAG, "Temperature widget selected");
-				// If no value is found for current temperature, set it to the default of 10°C
+		// If no value is found for current temperature, set it to the default of 10°C
                 widgetString = mPreferences.getString("current_temp_string", "10°C");
             }
-			// If the humidity widget has been selected, set the widget string to the current humidity from shared preferences
+		// If the humidity widget has been selected, set the widget string to the current humidity from shared preferences
             else if (mPreferences.getInt("selected_widget", 0) == 2) {
                 Log.d(TAG, "Humidity widget selected");
-				// If no value is found for current humidity, set it to the default of 50%
+		// If no value is found for current humidity, set it to the default of 50%
                 widgetString = mPreferences.getString("current_humidity_string", "50%");
             }
-			// If the wind speed widget has been selected, set the widget string to the current wind speed from shared preferences
+		// If the wind speed widget has been selected, set the widget string to the current wind speed from shared preferences
             else if (mPreferences.getInt("selected_widget", 0) == 3) {
                 Log.d(TAG, "Wind speed widget selected");
-				// If no value is found for current wind speed, set it to the default of 10m/s
+		// If no value is found for current wind speed, set it to the default of 10m/s
                 widgetString = mPreferences.getString("current_wind_speed_string", "10m/s");
             }
 
-			// Print in the log what the current widget string is
+		// Print in the log what the current widget string is
             Log.d(TAG, widgetString);
 
 
-			// Creates transparent canvas and sets the text style (white and shadow) and size
+		// Creates transparent canvas and sets the text style (white and shadow) and size
             int canvasWidth = 300;
             int canvasHeight = 130;
             Bitmap myForegroundBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
@@ -174,21 +174,21 @@ public class WallpaperService extends JobService {
             textPaint.setShadowLayer(2, 0, 4, R.color.colorWidgetShadow);
             //textPaint.setTypeface(Typeface.DEFAULT);
 
-			// Draws the widget string to the canvas and save this as an image
+		// Draws the widget string to the canvas and save this as an image
             canvas.drawText(widgetString, canvasWidth-6, canvasHeight-6, textPaint) ;
             canvas.save(Canvas.ALL_SAVE_FLAG);
             canvas.restore();
 
-			// Gets the current wallpaper
+		// Gets the current wallpaper
             Drawable wallpaperDrawable = getCurrentWallpaper();
 
-			// Converts the current wallpaper drawable into a bitmap
+		// Converts the current wallpaper drawable into a bitmap
             Bitmap myBackgroundBitmap = drawableToBitmap(wallpaperDrawable);
 			
-			// Combines the image with the widget string and the background into one image
+		// Combines the image with the widget string and the background into one image
             Bitmap WallpaperBitmap = combineImages(myBackgroundBitmap, myForegroundBitmap);
 
-			// Sets the wallpaper as the combined image
+		// Sets the wallpaper as the combined image
             changeWallpaper(WallpaperBitmap);
 
         }
@@ -197,25 +197,25 @@ public class WallpaperService extends JobService {
     }
 
     private Drawable getCurrentWallpaper() {
-		// Accesses the wallpaper manager and gets the current wallpaper/drawable
+	// Accesses the wallpaper manager and gets the current wallpaper/drawable
         final WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
         final Drawable wallpaperDrawable = wallpaperManager.getDrawable();
-		// Returns the drawable
+	// Returns the drawable
         return wallpaperDrawable;
     }
 
     private void changeWallpaper(Bitmap wallpaper) {
-		// Accesses the wallpaper manager
+	// Accesses the wallpaper manager
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(this.getApplicationContext());
 
         try {
-			// Sets the device wallaper depending on the bitmap that has been passed into the function
+	// Sets the device wallaper depending on the bitmap that has been passed into the function
             myWallpaperManager.setBitmap(wallpaper);
             Log.d("OnClick", "Wallpaper set");
         }
         catch (IOException e) {
-			// Prints error to log if unable to set wallpaper
+	// Prints error to log if unable to set wallpaper
             e.printStackTrace();
         }
 
@@ -224,7 +224,7 @@ public class WallpaperService extends JobService {
     public static Bitmap drawableToBitmap (Drawable drawable) {
         Bitmap bitmap = null;
 
-		// Checks if drawable it a bitmap drawable and returns bitmap version of drawable
+	// Checks if drawable it a bitmap drawable and returns bitmap version of drawable
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             if(bitmapDrawable.getBitmap() != null) {
@@ -232,14 +232,14 @@ public class WallpaperService extends JobService {
             }
         }
 
-		// If drawable is not a bitmap drawable, create bitmap
+	// If drawable is not a bitmap drawable, create bitmap
         if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
         } else {
             bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         }
 
-		// Adds drawable image to canvas and returns this as a bitmap
+	// Adds drawable image to canvas and returns this as a bitmap
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
@@ -250,38 +250,38 @@ public class WallpaperService extends JobService {
 
         Bitmap cs;
 
-		// Gets the width and height of the device (in pixels)
+	// Gets the width and height of the device (in pixels)
         DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
-		// Defines new bitmap with the resolution of the dimensions of the device
+	// Defines new bitmap with the resolution of the dimensions of the device
         cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas comboImage = new Canvas(cs);
-		// Sets the current wallpaper as the background in the canvas
+	// Sets the current wallpaper as the background in the canvas
         background = Bitmap.createScaledBitmap(background, width, height, true);
         comboImage.drawBitmap(background, 0, 0, null);
-		// Places widget string image on top in top right corner
+	// Places widget string image on top in top right corner
         comboImage.drawBitmap(foreground, (width-340), 50, null);
 
-		// Returns the combined image
+	// Returns the combined image
         return cs;
     }
 
     private void changeWifiWallpaper(String wifiWallpaperPath) {
-		// Accesses the wallpaper manager
+	// Accesses the wallpaper manager
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(this.getApplicationContext());
 
-		// If the path to the drawable assigned to the current SSID is not empty
+	// If the path to the drawable assigned to the current SSID is not empty
         if (wifiWallpaperPath != null) {
             try {
-				// Sets the device wallaper depending on the path of the drawable
+		// Sets the device wallaper depending on the path of the drawable
                 myWallpaperManager.setBitmap(BitmapFactory.decodeFile(wifiWallpaperPath));
                 Log.d("OnClick", "Wallpaper set");
             }
             catch (IOException e) {
-				// Prints error to log if unable to set wallpaper
+		// Prints error to log if unable to set wallpaper
                 e.printStackTrace();
             }
         }
@@ -291,11 +291,11 @@ public class WallpaperService extends JobService {
     {
         for(int i=0;i<mArrayList.size();i++)
         {
-			// Iterates through each item in the array until the current SSID is equal to the item in the array
+	// Iterates through each item in the array until the current SSID is equal to the item in the array
             String arrayWifiName = mArrayList.get(i).getWifiName();
             if(arrayWifiName.equals(wifiName))
             {
-				// Returns the index of the SSID in the array
+		// Returns the index of the SSID in the array
                 return i;
             }
         }
@@ -303,7 +303,7 @@ public class WallpaperService extends JobService {
     }
 
     public void saveArrayList(ArrayList<WifiItem> list, String key){
-		// Stores array in shared preferences as a JSON list
+	// Stores array in shared preferences as a JSON list
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
         Gson gson = new Gson();
@@ -313,7 +313,7 @@ public class WallpaperService extends JobService {
     }
 
     public ArrayList<WifiItem> getArrayList(String key){
-		// Retrieves JSON list of WifiItems form shared preferences and converts them into an array list
+	// Retrieves JSON list of WifiItems form shared preferences and converts them into an array list
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPreferences.getString(key, null);
@@ -322,14 +322,14 @@ public class WallpaperService extends JobService {
     }
 
     private void getCurrentWifi() {
-		// Accesses the wifi manager
+	// Accesses the wifi manager
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo;
 
-		// Gets the current connection info
+	// Gets the current connection info
         wifiInfo = wifiManager.getConnectionInfo();
         if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
-			// Gets the name of the SSID the device is currently connected to
+	// Gets the name of the SSID the device is currently connected to
             currentSsid = wifiInfo.getSSID();
         }
     }
@@ -433,7 +433,7 @@ public class WallpaperService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-		// Function is run if the job is cancelled
+	// Function is run if the job is cancelled
         Log.d(TAG, "Job cancelled before complete");
         jobCancelled = true;
         return true;
@@ -443,7 +443,7 @@ public class WallpaperService extends JobService {
         // Get last known recent location using new Google Play Services SDK (v11+)
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
 
-		// Checks whther the location permissions have been enabled or not
+	// Checks whther the location permissions have been enabled or not
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -459,7 +459,7 @@ public class WallpaperService extends JobService {
                         public void onSuccess(Location location) {
                             // GPS location can be null if GPS is switched off
                             if (location != null) {
-								// Passes the coordinates into onLocationChanged method
+				// Passes the coordinates into onLocationChanged method
                                 onLocationChanged(location.getLatitude(), location.getLongitude());
                             }
                         }
@@ -467,7 +467,7 @@ public class WallpaperService extends JobService {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-							// Error is generated if the location cannot be determined
+			// Error is generated if the location cannot be determined
                             Log.d(TAG, "Error trying to get last GPS location");
                             e.printStackTrace();
                         }
@@ -477,7 +477,7 @@ public class WallpaperService extends JobService {
 
 
     public void onLocationChanged(double latitude, double longitude) {
-		// Accesses shared preferences
+	// Accesses shared preferences
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
 
@@ -491,7 +491,7 @@ public class WallpaperService extends JobService {
     }
 
     public void getWeatherData() {
-		// Accesses shared preferences
+	// Accesses shared preferences
         final SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
 
@@ -560,7 +560,7 @@ public class WallpaperService extends JobService {
                 }
 
                 catch(JSONException e) {
-					// Prints error to log
+		// Prints error to log
                     e.printStackTrace();
                 }
             }
@@ -574,7 +574,7 @@ public class WallpaperService extends JobService {
             }
         });
 
-		// Adds weather data request to queue
+	// Adds weather data request to queue
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         queue.add(jor);
 
