@@ -291,10 +291,11 @@ public class WallpaperService extends JobService {
     {
         for(int i=0;i<mArrayList.size();i++)
         {
-			// Iterates through each item in the array until the current SSID is equal to the item in the array -------------------------
+			// Iterates through each item in the array until the current SSID is equal to the item in the array
             String arrayWifiName = mArrayList.get(i).getWifiName();
             if(arrayWifiName.equals(wifiName))
             {
+				// Returns the index of the SSID in the array
                 return i;
             }
         }
@@ -302,6 +303,7 @@ public class WallpaperService extends JobService {
     }
 
     public void saveArrayList(ArrayList<WifiItem> list, String key){
+		// Stores array in shared preferences as a JSON list
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
         Gson gson = new Gson();
@@ -311,6 +313,7 @@ public class WallpaperService extends JobService {
     }
 
     public ArrayList<WifiItem> getArrayList(String key){
+		// Retrieves JSON list of WifiItems form shared preferences and converts them into an array list
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPreferences.getString(key, null);
@@ -319,11 +322,14 @@ public class WallpaperService extends JobService {
     }
 
     private void getCurrentWifi() {
+		// Accesses the wifi manager
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo;
 
+		// Gets the current connection info
         wifiInfo = wifiManager.getConnectionInfo();
         if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
+			// Gets the name of the SSID the device is currently connected to
             currentSsid = wifiInfo.getSSID();
         }
     }
@@ -427,6 +433,7 @@ public class WallpaperService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
+		// Function is run if the job is cancelled
         Log.d(TAG, "Job cancelled before complete");
         jobCancelled = true;
         return true;
@@ -436,13 +443,15 @@ public class WallpaperService extends JobService {
         // Get last known recent location using new Google Play Services SDK (v11+)
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
 
+		// Checks whther the location permissions have been enabled or not
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Location has not been enabled", Toast.LENGTH_LONG).show();
             return  ;
         }
-        // If permissions have been granted, configure the gps refresh button
+		
+        // If permissions have been granted, get the device's last location
         else {
             locationClient.getLastLocation()
                     .addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -450,6 +459,7 @@ public class WallpaperService extends JobService {
                         public void onSuccess(Location location) {
                             // GPS location can be null if GPS is switched off
                             if (location != null) {
+								// Passes the coordinates into onLocationChanged method
                                 onLocationChanged(location.getLatitude(), location.getLongitude());
                             }
                         }
@@ -457,7 +467,8 @@ public class WallpaperService extends JobService {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d("MapDemoActivity", "Error trying to get last GPS location");
+							// Error is generated if the location cannot be determined
+                            Log.d(TAG, "Error trying to get last GPS location");
                             e.printStackTrace();
                         }
                     });
@@ -466,12 +477,12 @@ public class WallpaperService extends JobService {
 
 
     public void onLocationChanged(double latitude, double longitude) {
-
+		// Accesses shared preferences
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
 
         // Shows latitude for testing purposes
-        Toast.makeText(this, "Latitude: " + String.valueOf(latitude) + "\n" + "Longitude: " + String.valueOf(longitude), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "Latitude: " + String.valueOf(latitude) + "\n" + "Longitude: " + String.valueOf(longitude), Toast.LENGTH_SHORT).show();
 
         // Stores latitude and longitude values in shared preferences as strings as Android does not support storing doubles and floats would lose accuracy
         editor.putString("latitude", String.valueOf(latitude));
@@ -480,7 +491,7 @@ public class WallpaperService extends JobService {
     }
 
     public void getWeatherData() {
-
+		// Accesses shared preferences
         final SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
 
@@ -546,11 +557,6 @@ public class WallpaperService extends JobService {
                     // Toast for testing
                     // Toast.makeText(getApplicationContext(), String.valueOf(weatherCode), Toast.LENGTH_LONG).show();
 
-//                    currentCity.setText(city);
-//                    currentTemp.setText(String.valueOf(i) + "°");
-//                    currentWeather.setText(description.substring(0,1).toUpperCase() + description.substring(1));
-//                    currentDate.setText(formatted_date);
-
                 }
 
                 catch(JSONException e) {
@@ -562,10 +568,12 @@ public class WallpaperService extends JobService {
                 , new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+				Log.d(TAG, "Error retrieving weather data");
+				e.printStackTrace();
             }
         });
 
+		// Adds weather data request to queue
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         queue.add(jor);
 
