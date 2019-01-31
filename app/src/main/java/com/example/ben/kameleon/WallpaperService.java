@@ -560,6 +560,7 @@ public class WallpaperService extends JobService {
                 }
 
                 catch(JSONException e) {
+					// Prints error to log
                     e.printStackTrace();
                 }
             }
