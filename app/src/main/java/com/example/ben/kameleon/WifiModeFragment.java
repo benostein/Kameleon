@@ -101,65 +101,43 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-//        List<String> wifiArrayList = loadWifiArrayList();
-
+        // Creates ArrayList of WifiItems
         ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
 
+        // If wifiList is empty, get the Wi-Fi networks stored on the device and populate the wifiList
         if (wifiList == null) {
             createWifiList();
             wifiList = getArrayList("wifi_array_list");
         }
 
-        //buildRecyclerView();
-
+        // Locates recycler view in Wi-Fi mode fragment
         mRecyclerView = v.findViewById(R.id.my_recycler_view);
-        // Change if recycler view changes in size
+        // Defines that the recycler view of Wi-Fi networks will not change when being viewed
         mRecyclerView.setHasFixedSize(true);
+        // Accesses layout manager and wifi adapter class
         mLayoutManager = new LinearLayoutManager(getActivity());
         mAdapter = new WifiAdapter(wifiList);
 
+        // Sets the layout of the recycler view to the current activity and sets the data adapter to the wifi adapter class
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        // When an item in the recycler view is clicked on, do this:
         mAdapter.setOnItemClickListener(new WifiAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-//                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-//                photoPickerIntent.setType("image/*");
-//                startActivityForResult(photoPickerIntent, RESULT_OK);
 
-//                try (FileOutputStream out = new FileOutputStream(file)) {
-//                    selectedImagePath.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-//                    // PNG is a lossless format, the compression factor (100) is ignored
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
+                // Accesses shared preferences file
                 SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = mPreferences.edit();
-                //String wallpaperPath = mPreferences.getString("wallpaper_path","/storage/emulated/0/DCIM/Camera/IMG_20181219_191058.jpg");
 
+                // Store the position of the item clicked on within shared preferences
                 editor.putInt("temp_wifi_position", position);
                 editor.apply();
 
+                // Launches an intent that allows the user to select an image from the gallery
                 loadImageFromGallery();
 
-
-
-//                wifiList.get(position).getWifiWallpaper();
-
-//                WallpaperManager myWallpaperManager
-//                        = WallpaperManager.getInstance(getActivity().getApplicationContext());
-//
-//                if (wallpaperPath != null) {
-//                    try {
-//                        myWallpaperManager.setBitmap(BitmapFactory.decodeFile(wallpaperPath));
-//                        Log.d("OnClick", "Wallpaper set");
-//                    }
-//                    catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
             }
         });
 
@@ -178,11 +156,11 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            // When an Image is picked
+            // When an image is picked, do this:
             if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
                     && null != data) {
-                // Get the Image from data
-
+                
+                // Get the tmage from the intent data
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = { MediaStore.MediaColumns.DATA };
 
@@ -192,41 +170,38 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
                 // Move to first row
                 cursor.moveToFirst();
 
+                // Uses cursors position to locate selected image path
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imgPath = cursor.getString(columnIndex);
                 Log.d("path", imgPath);
                 cursor.close();
 
-                // Creates a new shared preferences file that allows user preferences to be stored within the application
+                // Accesses shared preferences file
                 SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-                // Allows preferences file to be edited using 'editor'
                 final SharedPreferences.Editor editor = mPreferences.edit();
 
+                // Stores the wallpaper path within shared preferences
                 editor.putString("wallpaper_path", imgPath);
                 editor.apply();
 
+                // Retrieves position of item clicked in shared preferences
                 Integer position = mPreferences.getInt("temp_wifi_position",0);
 
+                // Retrieves list of WifiItems
                 ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
 
+                // Sets the icon of the WifiItem pressed
                 changeIcon(position, R.drawable.ic_home);
 
+                // Sets the path of the wallpaper clicked on to the WifiItem pressed
                 setWallpaperPath(position, imgPath);
-
-
                 (wifiList.get(position)).setWifiWallpaperPath(imgPath);
 
+                // Logs WifiItem pressed for debugging/testing purposes
                 Log.d("wifiList", wifiList.get(position).toString());
 
-                // String[] wifiStringList = wifiList.toArray(new String[0]);
-
-                // saveWifiArrayList();
-
+                // Saves the new modified array of WifiItems to the system
                 saveArrayList(wifiList, "wifi_array_list");
-
-
-                // Bitmap myBitmap = BitmapFactory.decodeFile(imgPath);
-
 
             }
             else {
