@@ -65,6 +65,7 @@ public class WallpaperService extends JobService {
     };
     public String currentSsid;
     public String widgetString;
+    public int conditionWallpaper;
 
 
 
@@ -415,12 +416,22 @@ public class WallpaperService extends JobService {
         WallpaperManager myWallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
 
-        // Locates the corresponding wallpaper to the current condition using the conditionId passed into the method
-        int weatherConditionWallpaper = getResources().getIdentifier("img_wall_weather_" + weatherConditionIds.get(conditionId),"drawable", getPackageName());
+        // Accesses shared preferences file
+        SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
+
+
+        // If the nature pack is selected, retrieve those wallpapers
+        if(!mPreferences.getBoolean("selected_nature_pack_button", true)) {
+            conditionWallpaper = getResources().getIdentifier("img_wall_nature_weather_" + weatherConditionIds.get(conditionId),"drawable", getPackageName());
+        }
+        // If the cartoon pack is selected, retrieve those wallpapers
+        else if(!mPreferences.getBoolean("selected_cartoon_pack_button", true)) {
+            conditionWallpaper = getResources().getIdentifier("img_wall_weather_" + weatherConditionIds.get(conditionId),"drawable", getPackageName());
+        }
 
         try {
-            // Sets the wallpaper to the located wallpaper as previously defined
-            myWallpaperManager.setResource(+weatherConditionWallpaper);
+            // Sets the wallpaper to the located wallpaper as previously defined, depending on the pack selected
+            myWallpaperManager.setResource(+conditionWallpaper);
         }
         catch (IOException e) {
             // Prints error to log
@@ -570,7 +581,7 @@ public class WallpaperService extends JobService {
             @Override
             public void onErrorResponse(VolleyError error) {
 				Log.d(TAG, "Error retrieving weather data");
-				e.printStackTrace();
+				//e.printStackTrace();
             }
         });
 
