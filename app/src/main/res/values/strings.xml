@@ -3,7 +3,7 @@
     <string name="weather_mode">Weather Mode</string>
     <string name="weather_mode_desc">Automatically changes the wallpaper depending on the weather outside.</string>
     <string name="wifi_mode">Wi-Fi Mode</string>
-    <string name="wifi_mode_desc">Automatically changes the wallpaper depending on your Wi-Fi network.</string>
+    <string name="wifi_mode_desc">Automatically changes the wallpaper depending on your Wi-Fi network. PNGs and JPEGs recommended.</string>
     <string name="temp_mode">Temperature Mode</string>
     <string name="temp_mode_desc">Automatically changes the wallpaper depending on the temperature outside.</string>
     <string name="mode_button">Select</string>
@@ -16,4 +16,5 @@
     <string name="refresh_time">Refresh Time</string>
     <string name="refresh_time_desc">Specify how often the app refreshes and changes the wallpaper.</string>
     <string name="refresh_time_button">Refresh</string>
+    <string name="wifi_fragment_info">Click on an SSID to assign an image. PNGs and JPEGs are recommended.</string>
 </resources>

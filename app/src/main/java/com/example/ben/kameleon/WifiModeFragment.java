@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -160,48 +161,70 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
             if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
                     && null != data) {
                 
-                // Get the tmage from the intent data
+                // Get the image from the intent data
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = { MediaStore.MediaColumns.DATA };
+                String[] fileSize = { MediaStore.MediaColumns.SIZE };
 
                 // Get the cursor
                 Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
+                        null, null, null, null);
                 // Move to first row
                 cursor.moveToFirst();
 
+
                 // Uses cursors position to locate selected image path
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                imgPath = cursor.getString(columnIndex);
-                Log.d("path", imgPath);
-                cursor.close();
 
-                // Accesses shared preferences file
-                SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-                final SharedPreferences.Editor editor = mPreferences.edit();
+                // Uses cursors position to select size of image
+                int sizeIndex = cursor.getColumnIndex(fileSize[0]);
 
-                // Stores the wallpaper path within shared preferences
-                editor.putString("wallpaper_path", imgPath);
-                editor.apply();
+                // Gets the size of the image in bytes
+                long imageSize = cursor.getLong(sizeIndex);
 
-                // Retrieves position of item clicked in shared preferences
-                Integer position = mPreferences.getInt("temp_wifi_position",0);
+                // If the size of the image is less than 10Mb, do this:
+                if(imageSize < 10e6) {
 
-                // Retrieves list of WifiItems
-                ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
+                    // Gets the path of the image selected and prints it to the log
+                    imgPath = cursor.getString(columnIndex);
+                    Log.d("path", imgPath);
+                    cursor.close();
 
-                // Sets the icon of the WifiItem pressed
-                changeIcon(position, R.drawable.ic_home);
+                    // Accesses shared preferences file
+                    SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+                    final SharedPreferences.Editor editor = mPreferences.edit();
 
-                // Sets the path of the wallpaper clicked on to the WifiItem pressed
-                setWallpaperPath(position, imgPath);
-                (wifiList.get(position)).setWifiWallpaperPath(imgPath);
+                    // Stores the wallpaper path within shared preferences
+                    editor.putString("wallpaper_path", imgPath);
+                    editor.apply();
 
-                // Logs WifiItem pressed for debugging/testing purposes
-                Log.d("wifiList", wifiList.get(position).toString());
+                    // Retrieves position of item clicked in shared preferences
+                    Integer position = mPreferences.getInt("temp_wifi_position",0);
 
-                // Saves the new modified array of WifiItems to the system
-                saveArrayList(wifiList, "wifi_array_list");
+                    // Retrieves list of WifiItems
+                    ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
+
+                    // Sets the icon of the WifiItem pressed
+                    changeIcon(position, R.drawable.ic_home);
+                    (wifiList.get(position)).changeIcon(R.drawable.ic_home);
+
+                    // Sets the path of the wallpaper clicked on to the WifiItem pressed
+                    setWallpaperPath(position, imgPath);
+                    (wifiList.get(position)).setWifiWallpaperPath(imgPath);
+
+                    // Logs WifiItem pressed for debugging/testing purposes
+                    Log.d("wifiList", wifiList.get(position).toString());
+
+                    // Saves the new modified array of WifiItems to the system
+                    saveArrayList(wifiList, "wifi_array_list");
+                }
+                else {
+                    Toast.makeText(getActivity(), "Image selected is too large (>10Mb). Please try again.", Toast.LENGTH_LONG).show();
+                }
+
+
+
+
 
             }
             else {
