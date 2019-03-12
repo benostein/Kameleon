@@ -492,6 +492,24 @@ public class WallpaperService extends JobService {
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
 
+        if((latitude > 90) || (latitude < -90) || (longitude > 180) || (longitude < -180)) {
+
+            Toast.makeText(this, "GPS coordinates are outside of range. Sensor may be faulty. Weather data may be inaccurate.", Toast.LENGTH_SHORT).show();
+
+            if(latitude > 90) {
+                latitude = 90;
+            }
+            else if (latitude < -90) {
+                latitude = -90;
+            }
+            if (longitude > 180) {
+                longitude = 180;
+            }
+            else if (latitude < -180) {
+                latitude = -180;
+            }
+        }
+
         // Shows latitude for testing purposes
         // Toast.makeText(this, "Latitude: " + String.valueOf(latitude) + "\n" + "Longitude: " + String.valueOf(longitude), Toast.LENGTH_SHORT).show();
 
