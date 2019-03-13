@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.ImageReader;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -27,16 +28,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import it.lamba.utils.ImageData;
+
+
 import static android.app.Activity.RESULT_OK;
+import static it.lamba.utils.KImageCheck.analyzeImage;
 
 
 public class WifiModeFragment extends Fragment implements View.OnClickListener {
@@ -188,35 +201,47 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
                     // Gets the path of the image selected and prints it to the log
                     imgPath = cursor.getString(columnIndex);
                     Log.d("path", imgPath);
-                    cursor.close();
 
-                    // Accesses shared preferences file
-                    SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-                    final SharedPreferences.Editor editor = mPreferences.edit();
+                    // Converts the string path into a path and analyses the image
+                    Path path = Paths.get(imgPath);
+                    ImageData imageData = analyzeImage(path);
 
-                    // Stores the wallpaper path within shared preferences
-                    editor.putString("wallpaper_path", imgPath);
-                    editor.apply();
+                    // If image is not truncated/corrupt, do this:
+                    if(!imageData.isTruncated()) {
 
-                    // Retrieves position of item clicked in shared preferences
-                    Integer position = mPreferences.getInt("temp_wifi_position",0);
+                        cursor.close();
 
-                    // Retrieves list of WifiItems
-                    ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
+                        // Accesses shared preferences file
+                        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+                        final SharedPreferences.Editor editor = mPreferences.edit();
 
-                    // Sets the icon of the WifiItem pressed
-                    changeIcon(position, R.drawable.ic_home);
-                    (wifiList.get(position)).changeIcon(R.drawable.ic_home);
+                        // Stores the wallpaper path within shared preferences
+                        editor.putString("wallpaper_path", imgPath);
+                        editor.apply();
 
-                    // Sets the path of the wallpaper clicked on to the WifiItem pressed
-                    setWallpaperPath(position, imgPath);
-                    (wifiList.get(position)).setWifiWallpaperPath(imgPath);
+                        // Retrieves position of item clicked in shared preferences
+                        Integer position = mPreferences.getInt("temp_wifi_position", 0);
 
-                    // Logs WifiItem pressed for debugging/testing purposes
-                    Log.d("wifiList", wifiList.get(position).toString());
+                        // Retrieves list of WifiItems
+                        ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
 
-                    // Saves the new modified array of WifiItems to the system
-                    saveArrayList(wifiList, "wifi_array_list");
+                        // Sets the icon of the WifiItem pressed
+                        changeIcon(position, R.drawable.ic_home);
+                        (wifiList.get(position)).changeIcon(R.drawable.ic_home);
+
+                        // Sets the path of the wallpaper clicked on to the WifiItem pressed
+                        setWallpaperPath(position, imgPath);
+                        (wifiList.get(position)).setWifiWallpaperPath(imgPath);
+
+                        // Logs WifiItem pressed for debugging/testing purposes
+                        Log.d("wifiList", wifiList.get(position).toString());
+
+                        // Saves the new modified array of WifiItems to the system
+                        saveArrayList(wifiList, "wifi_array_list");
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "Image selected is corrupt. Please try again.", Toast.LENGTH_LONG).show();
+                    }
                 }
                 else {
                     Toast.makeText(getActivity(), "Image selected is too large (>10Mb). Please try again.", Toast.LENGTH_LONG).show();
@@ -259,39 +284,8 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
         saveArrayList(wifiList, "wifi_array_list");
     }
 
-//    private List<String> loadWifiArrayList() {
-//        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-//        final SharedPreferences.Editor editor = mPreferences.edit();
-//
-//        //ArrayList<WifiItem> wifiList;
-//
-//        List<String> wifiArrayList;
-//
-//        //Retrieve the Wi-Fi array list
-//        Gson gson = new Gson();
-//        String jsonText = mPreferences.getString("wifi_array_list", null);
-////        String[] wifiArrayList = gson.fromJson(jsonText, new TypeToken<String[]>() {
-////        }.getType());
-//
-//        Type type = new TypeToken<List<String>>() {
-//        }.getType();
-//        wifiArrayList = gson.fromJson(jsonText, type);
-//
-//        return wifiArrayList;
-//    }
-//
-//    private void saveWifiArrayList() {
-//        SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-//        final SharedPreferences.Editor editor = mPreferences.edit();
-//
-//
-////        //Set the values
-////        Gson gson = new Gson();
-////        String jsonText = gson.toJson(wifiList);
-////        editor.putString("wifi_array_list", jsonText);
-////        editor.apply();
-//
-//    }
+
+
 
     public void saveArrayList(ArrayList<WifiItem> list, String key){
         SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);

@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.ImageReader;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -32,6 +33,14 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -90,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // If the app has been activated, schedule the wallpaper service job
             scheduleJob(navigationView);
         }
+
+        Toast.makeText(this, "GPS coordinates are outside of range. Sensor may be faulty. Weather data may be inaccurate.", Toast.LENGTH_SHORT).show();
 
 //        StartUpBootReceiver responseReceiver = new StartUpBootReceiver(this); //passing context
 //        LocalBroadcastManager.getInstance(this).registerReceiver(responseReceiver,null);
@@ -207,16 +218,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
     }
 
-
-//    public void brCallback(String param){
-//        Log.d("BroadcastReceiver",param);
-//
-//        SharedPreferences mPreferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
-//
-//        if (mPreferences.getBoolean("selected_activate_button",false)) {
-//            // If the app has been activated, schedule the wallpaper service job
-//            scheduleJob(getViewModelStore());
-//        }
-//    }
 
 }
