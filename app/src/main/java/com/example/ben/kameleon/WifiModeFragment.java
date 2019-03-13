@@ -1,19 +1,14 @@
 package com.example.ben.kameleon;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.media.ImageReader;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
-import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,28 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import it.lamba.utils.ImageData;
-
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-import static it.lamba.utils.KImageCheck.analyzeImage;
 
 
 public class WifiModeFragment extends Fragment implements View.OnClickListener {
@@ -202,53 +183,40 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
                     imgPath = cursor.getString(columnIndex);
                     Log.d("path", imgPath);
 
-                    // Converts the string path into a path and analyses the image
-                    Path path = Paths.get(imgPath);
-                    ImageData imageData = analyzeImage(path);
+                    cursor.close();
 
-                    // If image is not truncated/corrupt, do this:
-                    if(!imageData.isTruncated()) {
+                    // Accesses shared preferences file
+                    SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+                    final SharedPreferences.Editor editor = mPreferences.edit();
 
-                        cursor.close();
+                    // Stores the wallpaper path within shared preferences
+                    editor.putString("wallpaper_path", imgPath);
+                    editor.apply();
 
-                        // Accesses shared preferences file
-                        SharedPreferences mPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-                        final SharedPreferences.Editor editor = mPreferences.edit();
+                    // Retrieves position of item clicked in shared preferences
+                    Integer position = mPreferences.getInt("temp_wifi_position", 0);
 
-                        // Stores the wallpaper path within shared preferences
-                        editor.putString("wallpaper_path", imgPath);
-                        editor.apply();
+                    // Retrieves list of WifiItems
+                    ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
 
-                        // Retrieves position of item clicked in shared preferences
-                        Integer position = mPreferences.getInt("temp_wifi_position", 0);
+                    // Sets the icon of the WifiItem pressed
+                    changeIcon(position, R.drawable.ic_home);
+                    (wifiList.get(position)).changeIcon(R.drawable.ic_home);
 
-                        // Retrieves list of WifiItems
-                        ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
+                    // Sets the path of the wallpaper clicked on to the WifiItem pressed
+                    setWallpaperPath(position, imgPath);
+                    (wifiList.get(position)).setWifiWallpaperPath(imgPath);
 
-                        // Sets the icon of the WifiItem pressed
-                        changeIcon(position, R.drawable.ic_home);
-                        (wifiList.get(position)).changeIcon(R.drawable.ic_home);
+                    // Logs WifiItem pressed for debugging/testing purposes
+                    Log.d("wifiList", wifiList.get(position).toString());
 
-                        // Sets the path of the wallpaper clicked on to the WifiItem pressed
-                        setWallpaperPath(position, imgPath);
-                        (wifiList.get(position)).setWifiWallpaperPath(imgPath);
+                    // Saves the new modified array of WifiItems to the system
+                    saveArrayList(wifiList, "wifi_array_list");
 
-                        // Logs WifiItem pressed for debugging/testing purposes
-                        Log.d("wifiList", wifiList.get(position).toString());
-
-                        // Saves the new modified array of WifiItems to the system
-                        saveArrayList(wifiList, "wifi_array_list");
-                    }
-                    else {
-                        Toast.makeText(getActivity(), "Image selected is corrupt. Please try again.", Toast.LENGTH_LONG).show();
-                    }
                 }
                 else {
                     Toast.makeText(getActivity(), "Image selected is too large (>10Mb). Please try again.", Toast.LENGTH_LONG).show();
                 }
-
-
-
 
 
             }
@@ -264,23 +232,25 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
 
     private void createWifiList() {
+        // Declares temporary variables for the creation of the Wi-Fi SSID list
         List<String> ssidList = new ArrayList<>();
         wifiList = new ArrayList<>();
 
+        // Accesses the WifiManager class and gets a list of the configured networks
         WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
         List<WifiConfiguration> configuredList = wifiManager.getConfiguredNetworks();
 
+        // Goes through each SSID and removes the whitespace from them
         for(WifiConfiguration config : configuredList) {
             ssidList.add(config.SSID.replace("\"", ""));
         }
 
+        // Creates a new WifiItem for each SSID
         for (int i = 0; i < configuredList.size(); i++){
             wifiList.add(new WifiItem(R.drawable.ic_signal_wifi, ssidList.get(i), selectedImagePath));
         }
 
-        // saveWifiArrayList();
-
+        // Stores the list of WifiItems
         saveArrayList(wifiList, "wifi_array_list");
     }
 
@@ -288,6 +258,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
 
     public void saveArrayList(ArrayList<WifiItem> list, String key){
+        // Stores the WifiItems list in shared preferences as a JSON object
         SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
         Gson gson = new Gson();
@@ -297,6 +268,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
     }
 
     public ArrayList<WifiItem> getArrayList(String key){
+        // Retrieves the WifiItems list in shared preferences stored as a JSON object and converts them into an ArrayList
         SharedPreferences mPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPreferences.getString(key, null);
@@ -306,6 +278,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
 
     public void changeIcon(int position, int image) {
+        // Changes the icon of the SSID clicked on
         wifiList = getArrayList("wifi_array_list");
         if (wifiList != null){
             wifiList.get(position).changeIcon(image);
@@ -317,6 +290,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
     }
 
     public void setWallpaperPath(int position, String wallpaperPath) {
+        // Sets the wallpaper path of the WifiItem clicked on
         ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
         wifiList.get(position).setWifiWallpaperPath(wallpaperPath);
         mAdapter.notifyItemChanged(position);
@@ -339,6 +313,7 @@ public class WifiModeFragment extends Fragment implements View.OnClickListener {
 
 
     public void replaceFragment(Fragment someFragment) {
+        // Replaces the current fragment with the fragment passed into the method
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         transaction.replace(R.id.fragment_main, someFragment);

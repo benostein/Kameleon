@@ -54,8 +54,6 @@ public class WidgetsFragment extends Fragment {
         // Restores user selected value in spinner from value in shared preferences
         widgetSpinner.setSelection(mPreferences.getInt("selected_widget",0));
 
-        // Toast.makeText(getActivity(), String.valueOf(mPreferences.getInt("selected_temp",0)), Toast.LENGTH_LONG).show();
-
         // Method for listening which item has been selected in the spinner
         widgetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
@@ -71,7 +69,7 @@ public class WidgetsFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // code goes here
+                // If nothing is selected, do this:
             }
         });
 

@@ -1,46 +1,25 @@
 package com.example.ben.kameleon;
 
-import android.Manifest;
-import android.app.ActivityManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.media.ImageReader;
-import android.os.Build;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -52,9 +31,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private WallpaperService mWallpaperService;
     private static final String TAG = "MainActivity";
     private Integer refreshTime = 0;
-
-
-    // Button weatherButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Forces the app to be portrait
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-
-//        wifiButton.setOnClickListener(this);
-//        tempButton.setOnClickListener(this);
-
-
-
+        // Accesses the FusedLocationProvider API
         mFusedLocationClient = getFusedLocationProviderClient(this);
 
         // Creates a new shared preferences file that allows user preferences to be stored within the application
@@ -100,23 +71,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             scheduleJob(navigationView);
         }
 
-        Toast.makeText(this, "GPS coordinates are outside of range. Sensor may be faulty. Weather data may be inaccurate.", Toast.LENGTH_SHORT).show();
-
-//        StartUpBootReceiver responseReceiver = new StartUpBootReceiver(this); //passing context
-//        LocalBroadcastManager.getInstance(this).registerReceiver(responseReceiver,null);
+        Toast.makeText(this, "Image selected is corrupt. Please try again.", Toast.LENGTH_LONG).show();
 
     }
 
 
     public void scheduleJob(View v) {
+        // Accesses shared preferences file
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
 
         // Links to the WallpaperService class
         ComponentName componentName = new ComponentName(this, WallpaperService.class);
 
         // Retrieves the user selected refresh time
-
-
         switch (mPreferences.getInt("selected_refresh_time",1)) {
             case 0:
                 refreshTime = 30;
@@ -155,8 +122,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         scheduler.cancel(100);
         Log.d(TAG, "Job cancelled");
     }
-
-
 
     // Allows menu button to open navigation panel when pressed
     @Override
@@ -217,6 +182,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
-
 
 }

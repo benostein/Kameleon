@@ -7,14 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class WeatherModeFragment extends Fragment implements View.OnClickListener {
 
@@ -119,6 +117,7 @@ public class WeatherModeFragment extends Fragment implements View.OnClickListene
     }
 
     public void replaceFragment(Fragment someFragment) {
+        // Replaces the current fragment with the fragment passed into the method
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         transaction.replace(R.id.fragment_main, someFragment);

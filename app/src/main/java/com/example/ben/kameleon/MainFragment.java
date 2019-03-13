@@ -1,43 +1,24 @@
 package com.example.ben.kameleon;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
-
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
@@ -47,6 +28,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // When view is being created, do this:
 
+        // Inflates the view
         View v = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Sets the action bar at the top of the app to say the current mode
@@ -97,8 +79,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         wifiCard.setEnabled(mPreferences.getBoolean("selected_wifi_card",false));
         tempCard.setEnabled(mPreferences.getBoolean("selected_temp_card",false));
 
-
-
         return v;
     }
 
@@ -124,47 +104,60 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         final SharedPreferences.Editor editor = mPreferences.edit();
 
         switch (view.getId()) {
+            // If the activate button is pressed, do this:
             case R.id.activate_button:
 
+                // Disables the activate button so it can no longer be pressed
                 activateButton.setEnabled(false);
                 deactivateButton.setEnabled(true);
 
+                // Sets the state of the mode buttons depending on the value from shared preferences
                 weatherButton.setEnabled(mPreferences.getBoolean("reactivated_weather_button", false));
                 wifiButton.setEnabled(mPreferences.getBoolean("reactivated_wifi_button", true));
                 tempButton.setEnabled(mPreferences.getBoolean("reactivated_temp_button", true));
 
+                // Allows each mode card to be clicked on
                 weatherCard.setEnabled(true);
                 wifiCard.setEnabled(true);
                 tempCard.setEnabled(true);
 
-
+                // Launches method to request the required permissions (location and storage)
                 requestRequiredPermissions();
 
+                // Schedules the app to run occasionally when the app is closed
                 ((MainActivity) getActivity()).scheduleJob(view);
 
+                // Displays toast to show app has been activated
                 Toast.makeText(getActivity(), "Activated!", Toast.LENGTH_SHORT).show();
 
                 break;
 
+            // If the deactivate button is pressed, do this:
             case R.id.deactivate_button:
 
+                // Stores the state of the mode buttons in shared preferences
                 editor.putBoolean("reactivated_weather_button", weatherButton.isEnabled());
                 editor.putBoolean("reactivated_wifi_button", weatherButton.isEnabled());
                 editor.putBoolean("reactivated_temp_button", weatherButton.isEnabled());
 
+                // Disables the deactivate button so it can no longer be pressed
                 activateButton.setEnabled(true);
                 deactivateButton.setEnabled(false);
 
+                // Disallows each button to be clicked on
                 weatherButton.setEnabled(false);
                 wifiButton.setEnabled(false);
                 tempButton.setEnabled(false);
 
+                // Disallows each mode card to be clicked on
                 weatherCard.setEnabled(false);
                 wifiCard.setEnabled(false);
                 tempCard.setEnabled(false);
 
+                // Unschedules the app to run occasionally when the app is closed
                 ((MainActivity) getActivity()).cancelJob(view);
 
+                // Displays toast to show app has been deactivated
                 Toast.makeText(getActivity(), "Deactivated", Toast.LENGTH_SHORT).show();
 
                 break;
@@ -217,8 +210,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 break;
         }
 
-        //TODO:  change icon?, user specified refresh time, embed info in wallpaper
-
             // Saves the state of the mode buttons
             saveButtons(activateButton, deactivateButton, weatherButton, wifiButton, tempButton);
             saveCards(weatherCard, wifiCard, tempCard);
@@ -226,6 +217,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private void requestRequiredPermissions() {
 
+        // Asks the user to allow the required permissions
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -237,7 +229,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // on Settings Fragment load, code goes here
     }
 
     public void saveButtons(Button activateButton, Button deactivateButton, Button weatherButton, Button wifiButton, Button tempButton) {
@@ -269,6 +260,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     public void replaceFragment(Fragment someFragment) {
+        // Replaces the current fragment with the fragment passed into the method
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         transaction.replace(R.id.fragment_main, someFragment);

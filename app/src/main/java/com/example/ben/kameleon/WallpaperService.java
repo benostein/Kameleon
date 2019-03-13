@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -57,17 +56,9 @@ public class WallpaperService extends JobService {
 
     private static final String TAG = "WallpaperJobService";
     private boolean jobCancelled = false;
-    // Array of weather wallpaper drawables
-    public static Integer[] weatherWallpapers = {
-
-            R.drawable.img_wall_weather_801, R.drawable.img_wall_weather_601, R.drawable.img_wall_weather_200, R.drawable.img_wall_weather_500, R.drawable.img_wall_weather_800
-
-    };
     public String currentSsid;
     public String widgetString;
     public int conditionWallpaper;
-
-
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
@@ -76,12 +67,9 @@ public class WallpaperService extends JobService {
         // Links to shared preferences file
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
 
-
         // If weather mode is selected, change the wallpaper depending on the weather condition
         if (!mPreferences.getBoolean("selected_weather_button", true)) {
             Log.d(TAG, "Weather mode has started");
-
-            // Toast.makeText(getApplicationContext(), "Weather mode has started", Toast.LENGTH_LONG).show();
 
             // Gets the latest location
             getLastLocation();
@@ -105,7 +93,6 @@ public class WallpaperService extends JobService {
 
             // Gets list of SSIDs (previously connected to) from shared preferences stored within the Wi-Fi mode array of SSIDs
             ArrayList<WifiItem> wifiList = getArrayList("wifi_array_list");
-
             String json = mPreferences.getString("wifi_array_list", null);
 
             try {
@@ -126,8 +113,6 @@ public class WallpaperService extends JobService {
                 e.printStackTrace();
                 Log.d(TAG, "Wallpaper image not configured.");
             }
-
-
 
         }
         else {
@@ -161,7 +146,6 @@ public class WallpaperService extends JobService {
 		    // Print in the log what the current widget string is
             Log.d(TAG, widgetString);
 
-
 		    // Creates transparent canvas and sets the text style (white and shadow) and size
             int canvasWidth = 300;
             int canvasHeight = 130;
@@ -173,7 +157,6 @@ public class WallpaperService extends JobService {
             textPaint.setTextSize(30 * getResources().getDisplayMetrics().density);
             textPaint.setColor(Color.WHITE);
             textPaint.setShadowLayer(2, 0, 4, R.color.colorWidgetShadow);
-            //textPaint.setTypeface(Typeface.DEFAULT);
 
 		    // Draws the widget string to the canvas and save this as an image
             canvas.drawText(widgetString, canvasWidth-6, canvasHeight-6, textPaint) ;
@@ -211,7 +194,7 @@ public class WallpaperService extends JobService {
                 = WallpaperManager.getInstance(this.getApplicationContext());
 
         try {
-	    // Sets the device wallaper depending on the bitmap that has been passed into the function
+	    // Sets the device wallpaper depending on the bitmap that has been passed into the function
             myWallpaperManager.setBitmap(wallpaper);
             Log.d("OnClick", "Wallpaper set");
         }
@@ -223,6 +206,7 @@ public class WallpaperService extends JobService {
     }
 
     public static Bitmap drawableToBitmap (Drawable drawable) {
+        // Declares bitmap variable
         Bitmap bitmap = null;
 
 	    // Checks if drawable it a bitmap drawable and returns bitmap version of drawable
@@ -248,7 +232,7 @@ public class WallpaperService extends JobService {
     }
 
     public Bitmap combineImages(Bitmap background, Bitmap foreground) {
-
+        // Declares bitmap variable
         Bitmap cs;
 
 	    // Gets the width and height of the device (in pixels)
@@ -439,9 +423,6 @@ public class WallpaperService extends JobService {
         }
     }
 
-
-
-
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
 	    // Function is run if the job is cancelled
@@ -454,7 +435,7 @@ public class WallpaperService extends JobService {
         // Get last known recent location using new Google Play Services SDK (v11+)
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
 
-	    // Checks whther the location permissions have been enabled or not
+	    // Checks whether the location permissions have been enabled or not
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -492,11 +473,13 @@ public class WallpaperService extends JobService {
         SharedPreferences mPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = mPreferences.edit();
 
-
+        // Checks whether coordinates are within the valid ranges or not
         if((latitude > 90) || (latitude < -90) || (longitude > 180) || (longitude < -180)) {
 
+            // Displays a toast
             Toast.makeText(this, "GPS coordinates are outside of range. Sensor may be faulty. Weather data may be inaccurate.", Toast.LENGTH_SHORT).show();
 
+            // Rounds inaccurate data to nearest limit
             if(latitude > 90) {
                 latitude = 90;
             }
@@ -550,39 +533,35 @@ public class WallpaperService extends JobService {
                     String temp = String.valueOf(main_object.getDouble("temp"));
                     String humidity = String.valueOf(main_object.getInt("humidity"));
                     String windSpeed = String.valueOf(wind_object.getDouble("speed"));
-//                    String description = object.getString("description");
-//                    String city = response.getString("name");
                     String weatherCode = object.getString("id");
 
+                    // Stores the condition in shared preferences
                     editor.putString("condition_id", String.valueOf(weatherCode));
 
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-                    String formatted_date = sdf.format(calendar.getTime());
-
+                    // Declares temperature variables
                     double temperature = Double.parseDouble(temp);
                     int temperatureInt;
                     String temperatureString;
 
+                    // If fahrenheit is selected in options, convert it into fahrenheit
                     if (mPreferences.getInt("selected_temp", 0) == 1) {
                         temperature = ((9/5) * temperature + 32);
                         temperatureInt = (int)(Math.round(temperature));
                         temperatureString = String.valueOf(temperatureInt) + (char) 0x00B0 + "F";
                     }
+                    // Otherwise use celsius
                     else {
                         temperatureInt = (int)(Math.round(temperature));
                         temperatureString = String.valueOf(temperatureInt) + (char) 0x00B0 + "C";
                     }
 
-
+                    // Store data in shared preferences
                     editor.putInt("current_temp", temperatureInt);
                     editor.putString("current_temp_string", temperatureString);
                     editor.putString("current_humidity_string", (humidity + "%"));
                     editor.putString("current_wind_speed_string", (windSpeed + "m/s"));
 
-
                     editor.apply();
-
 
                     // Toast for testing
                     // Toast.makeText(getApplicationContext(), String.valueOf(weatherCode), Toast.LENGTH_LONG).show();
